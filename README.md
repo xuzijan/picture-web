@@ -15,4 +15,15 @@ npm install
 npm run dev
 ```
 
-打开 http://localhost:3000 。当前版本使用浏览器 localStorage 保存演示数据，方便先看交互效果。接入生产环境时，将上传文件放到 Cloudflare R2 / S3 / Cloudinary，将图片元数据与投票写入 MongoDB，并在登录层接入 Clerk GitHub OAuth。
+打开 http://localhost:3000 。当前版本使用浏览器 localStorage 保存演示数据，方便先看交互效果。
+
+## 生产接入准备
+
+项目已经包含 Clerk、MongoDB Atlas 和 Vercel Blob 的服务端接口。复制 `.env.example` 为 `.env.local` 并填写对应的环境变量后：
+
+- `GET /api/images`：读取最新图片与当前登录用户的投票
+- `POST /api/upload`：管理员批量上传图片到 Vercel Blob，并写入 MongoDB
+- `PUT /api/images/:id/vote`：保存或取消当前用户对图片的认可判断
+- `PUT /api/images/:id/feature`：管理员设置精选状态
+
+`ADMIN_USER_IDS` 填写 Clerk 用户 ID（逗号分隔），只有这些账号可以上传和设置精选。当前页面仍保留本地演示数据，等 Clerk 和数据库变量配置完成后再切换到 API 数据源。
