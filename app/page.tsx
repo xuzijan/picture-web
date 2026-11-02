@@ -112,15 +112,9 @@ export default function Home() {
   return (
     <main className="shell">
       <header className="topbar">
-        <div className="brand"><span className="brand-mark"><i /><i /><i /></span><span>frameflow</span></div>
-        <nav className="topnav"><a className="active" href="#gallery">画廊</a><a href="#about">使用说明</a></nav>
+        <div className="top-spacer" />
         <div className="top-actions"><span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">Zijian</span><span className="online-dot" /></span><button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button></div>
       </header>
-
-      <section className="intro" id="about">
-        <div><p className="eyebrow">VISUAL REVIEW ROOM <span>·</span> 2026</p><h1>让好图被看见。</h1><p className="subtitle">一个给小组使用的图片灵感墙。浏览、放大，然后留下你的判断。</p></div>
-        <div className="intro-stat"><strong>{images.length}</strong><span>张图片<br />正在收集</span></div>
-      </section>
 
       <section className="toolbar" id="gallery">
         <div className="filter-tabs"><button className={activeFilter === 'all' ? 'tab active' : 'tab'} onClick={() => setActiveFilter('all')}>全部图片 <b>{images.length}</b></button><button className={activeFilter === 'featured' ? 'tab active' : 'tab'} onClick={() => setActiveFilter('featured')}>精选 <b>{images.filter((image) => image.featured).length}</b></button></div>
@@ -130,7 +124,7 @@ export default function Home() {
       <section className="masonry" aria-label="图片瀑布流">
         {visibleImages.map((image, index) => <article className={`image-card card-${index % 5}`} key={image.id}>
           <button className="image-button" onClick={() => setSelected(image)} aria-label={`放大查看 ${image.name}`}><img src={image.src} alt={image.name} /></button>
-          <div className="card-overlay"><div><p className="image-name">{image.name}</p><p className="image-date">{formatDate(image.createdAt)}</p></div><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
+          <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
           <div className="vote-row"><span className="vote-label">你的判断</span><div className="vote-buttons"><button className={image.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(image.id, 'up')}><Icon>✓</Icon>认可</button><button className={image.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(image.id, 'down')}><Icon>×</Icon>不认可</button></div></div>
         </article>)}
       </section>
@@ -139,12 +133,8 @@ export default function Home() {
 
       {isUploadOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setUploadOpen(false)}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className="modal-head"><div><p className="eyebrow">ADMIN / ADD ASSETS</p><h2 id="upload-title">上传图片</h2></div><button className="close" onClick={() => setUploadOpen(false)}>×</button></div><div className={dragging ? 'dropzone dragging' : 'dropzone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop} onClick={() => inputRef.current?.click()}><input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={handleInput} /><span className="upload-icon">↑</span><strong>拖拽图片到这里</strong><span>或点击选择，可一次上传多张</span><small>PNG、JPG、WEBP · 建议单张不超过 10MB</small></div>{pendingFiles.length > 0 && <div className="pending"><div className="pending-title"><span>待上传 {pendingFiles.length} 张</span><button onClick={() => setPendingFiles([])}>清空</button></div><div className="pending-list">{pendingFiles.map((file, index) => <div className="pending-item" key={`${file.name}-${index}`}><span>{file.name}</span><button onClick={() => setPendingFiles((current) => current.filter((_, i) => i !== index))}>×</button></div>)}</div></div>}<div className="modal-actions"><button className="button ghost" onClick={() => setUploadOpen(false)}>取消</button><button className="button primary" disabled={!pendingFiles.length} onClick={publishFiles}>发布到画廊 <Icon>→</Icon></button></div></div></div>}
 
-      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><img src={selected.src} alt={selected.name} /><div className="lightbox-info"><div><p className="eyebrow">IMAGE PREVIEW</p><h2>{selected.name}</h2></div><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')}><Icon>✓</Icon>认可</button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')}><Icon>×</Icon>不认可</button></div></div></div></div>}
+      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><img src={selected.src} alt={selected.name} /><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')}><Icon>✓</Icon>认可</button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')}><Icon>×</Icon>不认可</button></div></div></div></div>}
     </main>
   );
 }
 
-function formatDate(timestamp: number) {
-  const date = new Date(timestamp);
-  return `${date.getMonth() + 1}月${date.getDate()}日 · ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-}
