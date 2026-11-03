@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
 type Vote = 'up' | 'down' | null;
 type GalleryImage = {
@@ -39,6 +40,7 @@ function Icon({ children }: { children: React.ReactNode }) {
 }
 
 export default function Home() {
+  const hasClerk = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const [images, setImages] = useState<GalleryImage[]>(starterImages);
   const [isUploadOpen, setUploadOpen] = useState(false);
   const [selected, setSelected] = useState<GalleryImage | null>(null);
@@ -46,19 +48,45 @@ export default function Home() {
   const [dragging, setDragging] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'all' | 'featured'>('all');
   const [ready, setReady] = useState(false);
+  const [connected, setConnected] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORE_KEY);
-      if (saved) setImages(JSON.parse(saved));
-    } catch { /* use starter data when local storage is unavailable */ }
-    setReady(true);
+    let cancelled = false;
+    async function load() {
+      try {
+        const session = await fetch('/api/session').then((response) => response.ok ? response.json() : null);
+        if (cancelled) return;
+        if (session?.authenticated) {
+          setAuthenticated(true);
+          setIsAdmin(Boolean(session.admin));
+          const response = await fetch('/api/images');
+          if (response.ok) {
+            const remote = await response.json();
+            setImages(remote.map((image: { id: string; url: string; name: string; createdAt: string; featured: boolean; vote: Vote }) => ({ ...image, src: image.url, createdAt: new Date(image.createdAt).getTime() })));
+            setConnected(true);
+            setReady(true);
+            return;
+          }
+        }
+      } catch { /* fall back to local preview */ }
+      try {
+        const saved = window.localStorage.getItem(STORE_KEY);
+        if (saved) setImages(JSON.parse(saved));
+      } catch { /* use starter data when local storage is unavailable */ }
+      if (!cancelled) setReady(true);
+    }
+    load();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
-    if (ready) window.localStorage.setItem(STORE_KEY, JSON.stringify(images));
-  }, [images, ready]);
+    if (ready && !connected) window.localStorage.setItem(STORE_KEY, JSON.stringify(images));
+  }, [images, ready, connected]);
 
   const visibleImages = useMemo(
     () => images.filter((image) => activeFilter === 'all' || image.featured).sort((a, b) => b.createdAt - a.createdAt),
@@ -77,6 +105,24 @@ export default function Home() {
   };
 
   const publishFiles = async () => {
+    if (connected) {
+      setBusy(true);
+      setNotice('正在上传…');
+      try {
+        const formData = new FormData();
+        pendingFiles.forEach((file) => formData.append('files', file));
+        const response = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!response.ok) throw new Error('upload failed');
+        const result = await fetch('/api/images');
+        const remote = await result.json();
+        setImages(remote.map((image: { id: string; url: string; name: string; createdAt: string; featured: boolean; vote: Vote }) => ({ ...image, src: image.url, createdAt: new Date(image.createdAt).getTime() })));
+        setPendingFiles([]);
+        setUploadOpen(false);
+        setNotice('上传完成');
+      } catch { setNotice('上传失败，请检查存储配置'); }
+      finally { setBusy(false); }
+      return;
+    }
     const additions = await Promise.all(pendingFiles.map(async (file, index) => ({
       id: `${Date.now()}-${index}-${file.name}`,
       src: await new Promise<string>((resolve, reject) => {
@@ -96,12 +142,16 @@ export default function Home() {
   };
 
   const updateVote = (id: string, vote: Exclude<Vote, null>) => {
-    setImages((current) => current.map((image) => image.id === id ? { ...image, vote: image.vote === vote ? null : vote } : image));
-    setSelected((current) => current && current.id === id ? { ...current, vote: current.vote === vote ? null : vote } : current);
+    const nextVote = images.find((image) => image.id === id)?.vote === vote ? null : vote;
+    setImages((current) => current.map((image) => image.id === id ? { ...image, vote: nextVote } : image));
+    setSelected((current) => current && current.id === id ? { ...current, vote: nextVote } : current);
+    if (connected) fetch(`/api/images/${id}/vote`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: nextVote }) }).catch(() => setNotice('投票保存失败'));
   };
 
   const toggleFeatured = (id: string) => {
-    setImages((current) => current.map((image) => image.id === id ? { ...image, featured: !image.featured } : image));
+    const nextFeatured = !images.find((image) => image.id === id)?.featured;
+    setImages((current) => current.map((image) => image.id === id ? { ...image, featured: nextFeatured } : image));
+    if (connected) fetch(`/api/images/${id}/feature`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ featured: nextFeatured }) }).catch(() => setNotice('精选状态保存失败'));
   };
 
   const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +163,7 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <div className="top-spacer" />
-        <div className="top-actions"><span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">Zijian</span><span className="online-dot" /></span><button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button></div>
+        <div className="top-actions">{hasClerk ? <><SignedOut><SignInButton mode="modal"><button className="button ghost">登录</button></SignInButton></SignedOut><SignedIn><UserButton /></SignedIn></> : <span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">本地用户</span><span className="online-dot" /></span>}<span className="mode-label">{connected ? (isAdmin ? '管理员' : '在线') : '本地预览'}</span>{(!connected || (authenticated && isAdmin)) && <button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button>}</div>
       </header>
 
       <section className="toolbar" id="gallery">
@@ -129,9 +179,9 @@ export default function Home() {
         </article>)}
       </section>
 
-      <footer><span><span className="footer-dot" />本地演示模式</span><span>图片只保存在当前浏览器</span></footer>
+      <footer><span><span className="footer-dot" />{connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : '图片只保存在当前浏览器')}</span></footer>
 
-      {isUploadOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setUploadOpen(false)}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className="modal-head"><div><p className="eyebrow">ADMIN / ADD ASSETS</p><h2 id="upload-title">上传图片</h2></div><button className="close" onClick={() => setUploadOpen(false)}>×</button></div><div className={dragging ? 'dropzone dragging' : 'dropzone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop} onClick={() => inputRef.current?.click()}><input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={handleInput} /><span className="upload-icon">↑</span><strong>拖拽图片到这里</strong><span>或点击选择，可一次上传多张</span><small>PNG、JPG、WEBP · 建议单张不超过 10MB</small></div>{pendingFiles.length > 0 && <div className="pending"><div className="pending-title"><span>待上传 {pendingFiles.length} 张</span><button onClick={() => setPendingFiles([])}>清空</button></div><div className="pending-list">{pendingFiles.map((file, index) => <div className="pending-item" key={`${file.name}-${index}`}><span>{file.name}</span><button onClick={() => setPendingFiles((current) => current.filter((_, i) => i !== index))}>×</button></div>)}</div></div>}<div className="modal-actions"><button className="button ghost" onClick={() => setUploadOpen(false)}>取消</button><button className="button primary" disabled={!pendingFiles.length} onClick={publishFiles}>发布到画廊 <Icon>→</Icon></button></div></div></div>}
+      {isUploadOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setUploadOpen(false)}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className="modal-head"><div><p className="eyebrow">ADMIN / ADD ASSETS</p><h2 id="upload-title">上传图片</h2></div><button className="close" onClick={() => setUploadOpen(false)}>×</button></div><div className={dragging ? 'dropzone dragging' : 'dropzone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop} onClick={() => inputRef.current?.click()}><input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={handleInput} /><span className="upload-icon">↑</span><strong>拖拽图片到这里</strong><span>或点击选择，可一次上传多张</span><small>PNG、JPG、WEBP · 建议单张不超过 10MB</small></div>{pendingFiles.length > 0 && <div className="pending"><div className="pending-title"><span>待上传 {pendingFiles.length} 张</span><button onClick={() => setPendingFiles([])}>清空</button></div><div className="pending-list">{pendingFiles.map((file, index) => <div className="pending-item" key={`${file.name}-${index}`}><span>{file.name}</span><button onClick={() => setPendingFiles((current) => current.filter((_, i) => i !== index))}>×</button></div>)}</div></div>}<div className="modal-actions"><button className="button ghost" onClick={() => setUploadOpen(false)}>取消</button><button className="button primary" disabled={!pendingFiles.length || busy} onClick={publishFiles}>{busy ? '上传中…' : '发布到画廊'} <Icon>→</Icon></button></div></div></div>}
 
       {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><img src={selected.src} alt={selected.name} /><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')}><Icon>✓</Icon>认可</button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')}><Icon>×</Icon>不认可</button></div></div></div></div>}
     </main>
