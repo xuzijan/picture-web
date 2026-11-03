@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
+import { Show, SignInButton, UserButton } from '@clerk/nextjs';
 
 type Vote = 'up' | 'down' | null;
 type GalleryImage = {
@@ -163,7 +163,7 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <div className="top-spacer" />
-        <div className="top-actions">{hasClerk ? <><SignedOut><SignInButton mode="modal"><button className="button ghost">登录</button></SignInButton></SignedOut><SignedIn><UserButton /></SignedIn></> : <span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">本地用户</span><span className="online-dot" /></span>}<span className="mode-label">{connected ? (isAdmin ? '管理员' : '在线') : '本地预览'}</span>{(!connected || (authenticated && isAdmin)) && <button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button>}</div>
+        <div className="top-actions">{hasClerk ? <><Show when="signed-out"><SignInButton mode="modal"><button className="button ghost">登录</button></SignInButton></Show><Show when="signed-in"><UserButton /></Show></> : <span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">本地用户</span><span className="online-dot" /></span>}<span className="mode-label">{connected ? (isAdmin ? '管理员' : '在线') : '本地预览'}</span>{(!connected || (authenticated && isAdmin)) && <button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button>}</div>
       </header>
 
       <section className="toolbar" id="gallery">
