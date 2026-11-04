@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { DatabaseConfigurationError, getDb, reportDatabaseFailure } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
 
 export async function GET() {
@@ -13,7 +13,9 @@ export async function GET() {
     ]).toArray();
     return NextResponse.json(images.map((image) => ({ ...image, id: String(image._id), categoryIds: (image.categoryIds || []).map(String), _id: undefined })));
   } catch (error) {
-    const status = error instanceof Response ? error.status : 503;
-    return NextResponse.json({ error: status === 503 ? 'Database is not configured' : 'Unable to load images' }, { status });
+    if (error instanceof Response) return NextResponse.json({ error: 'Unable to load images' }, { status: error.status });
+    reportDatabaseFailure(error, 'GET /api/images');
+    const missingConfiguration = error instanceof DatabaseConfigurationError;
+    return NextResponse.json({ error: missingConfiguration ? 'MONGODB_URI is missing from this deployment' : 'MongoDB connection failed; check the deployment logs' }, { status: 503 });
   }
 }

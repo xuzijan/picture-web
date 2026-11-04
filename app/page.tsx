@@ -88,6 +88,11 @@ export default function Home() {
             setReady(true);
             return;
           }
+          const failure = await response.json().catch(() => null);
+          setImages([]);
+          setNotice(failure?.error || '云端图片读取失败');
+          setReady(true);
+          return;
         }
       } catch { /* fall back to local preview */ }
       try {
