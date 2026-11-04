@@ -195,6 +195,10 @@ export default function Home() {
   };
 
   const publishFiles = async () => {
+    if (authenticated && !connected) {
+      setNotice('云端数据库暂不可用，图片尚未上传');
+      return;
+    }
     if (connected) {
       setBusy(true);
       setNotice('正在上传…');
@@ -291,7 +295,7 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <div className="top-spacer" />
-        <div className="top-actions">{hasClerk ? <><Show when="signed-out"><SignInButton mode="modal"><button className="button ghost">登录</button></SignInButton></Show><Show when="signed-in"><UserButton /></Show></> : <span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">本地用户</span><span className="online-dot" /></span>}<span className="mode-label">{connected ? (isAdmin ? '管理员' : '在线') : '本地预览'}</span>{(!connected || (authenticated && isAdmin)) && <button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button>}</div>
+        <div className="top-actions">{hasClerk ? <><Show when="signed-out"><SignInButton mode="modal"><button className="button ghost">登录</button></SignInButton></Show><Show when="signed-in"><UserButton /></Show></> : <span className="user-pill"><span className="avatar">Z</span><span className="desktop-only">本地用户</span><span className="online-dot" /></span>}<span className="mode-label">{authenticated && !connected ? '云端连接异常' : connected ? (isAdmin ? '管理员' : '在线') : '本地预览'}</span>{(!hasClerk || (connected && authenticated && isAdmin)) && <button className="button primary" onClick={() => setUploadOpen(true)}><Icon>＋</Icon>上传图片</button>}</div>
       </header>
 
       <section className="toolbar" id="gallery">
@@ -315,10 +319,10 @@ export default function Home() {
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
           <div className="vote-row"><div className="vote-buttons"><button className={image.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(image.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={image.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(image.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div>
         </article>)}
-        {!visibleImages.length && <div className="gallery-empty">{activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
+        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
-      <footer><span><span className="footer-dot" />{connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : '图片只保存在当前浏览器')}</span></footer>
+      <footer><span><span className="footer-dot" />{authenticated && !connected ? '云端连接异常' : connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : authenticated ? '云端数据未加载，本地操作已暂停' : '图片只保存在当前浏览器')}</span></footer>
 
       {isUploadOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setUploadOpen(false)}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className="modal-head"><div><p className="eyebrow">ADMIN / ADD ASSETS</p><h2 id="upload-title">上传图片</h2></div><button className="close" onClick={() => setUploadOpen(false)}>×</button></div><div className={dragging ? 'dropzone dragging' : 'dropzone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop} onClick={() => inputRef.current?.click()}><input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={handleInput} /><span className="upload-icon">↑</span><strong>拖拽图片到这里</strong><span>或点击选择，可一次上传多张</span><small>PNG、JPG、WEBP · 建议单张不超过 10MB</small></div>{pendingFiles.length > 0 && <div className="pending"><div className="pending-title"><span>待上传 {pendingFiles.length} 张</span><button onClick={() => setPendingFiles([])}>清空</button></div><div className="pending-list">{pendingFiles.map((file, index) => <div className="pending-item" key={`${file.name}-${index}`}><span>{file.name}</span><button onClick={() => setPendingFiles((current) => current.filter((_, i) => i !== index))}>×</button></div>)}</div></div>}<div className="modal-actions"><button className="button ghost" onClick={() => setUploadOpen(false)}>取消</button><button className="button primary" disabled={!pendingFiles.length || busy} onClick={publishFiles}>{busy ? '上传中…' : '发布到画廊'} <Icon>→</Icon></button></div></div></div>}
 
