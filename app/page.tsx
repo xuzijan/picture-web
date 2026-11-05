@@ -57,6 +57,9 @@ export default function Home() {
   const [categoryName, setCategoryName] = useState('');
   const [selectingImages, setSelectingImages] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
+  const [downloadMode, setDownloadMode] = useState(false);
+  const [downloadSelectedIds, setDownloadSelectedIds] = useState<string[]>([]);
+  const [downloadBusy, setDownloadBusy] = useState(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [ready, setReady] = useState(false);
@@ -183,6 +186,52 @@ export default function Home() {
       : Array.from(new Set([...current, ...visibleImages.map((image) => image.id)])));
   };
 
+  const toggleDownloadSelection = (id: string) => {
+    setDownloadSelectedIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  };
+
+  const selectAllDownloadVisible = () => {
+    const allSelected = visibleImages.every((image) => downloadSelectedIds.includes(image.id));
+    setDownloadSelectedIds((current) => allSelected
+      ? current.filter((id) => !visibleImages.some((image) => image.id === id))
+      : Array.from(new Set([...current, ...visibleImages.map((image) => image.id)])));
+  };
+
+  const downloadImage = (id: string, name: string) => {
+    const link = document.createElement('a');
+    link.href = connected ? `/api/download?id=${encodeURIComponent(id)}` : images.find((image) => image.id === id)?.src || name;
+    link.download = name;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const downloadSelected = async () => {
+    if (!downloadSelectedIds.length || downloadBusy) return;
+    setDownloadBusy(true);
+    setNotice('正在准备下载…');
+    try {
+      const query = downloadSelectedIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
+      const response = await fetch(`/api/download?${query}`);
+      if (!response.ok) throw new Error('下载失败，请重试');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'frameflow-images.zip';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setNotice(`已准备 ${downloadSelectedIds.length} 张图片`);
+      setDownloadSelectedIds([]);
+      setDownloadMode(false);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : '下载失败，请重试');
+    } finally { setDownloadBusy(false); }
+  };
+
   const addFiles = (files: FileList | File[]) => {
     const accepted = Array.from(files).filter((file) => file.type.startsWith('image/'));
     setPendingFiles((current) => [...current, ...accepted]);
@@ -306,19 +355,21 @@ export default function Home() {
           <button className="tab add-category-tab" onClick={() => setCategoryModalOpen(true)} aria-label="新建分类" title="新建分类">＋</button>
         </div>
         <label className="search-box"><span aria-hidden="true" className="search-icon">⌕</span><input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="搜索图片名称" aria-label="搜索图片名称" />{searchTerm && <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="清除搜索">×</button>}</label>
-        <div className="sort-label"><Icon>↕</Icon> 最新上传</div>
+        <div className="toolbar-end">{connected && authenticated && <button className="button ghost download-entry" onClick={() => { setDownloadMode(true); setSelectingImages(false); setSelectedImageIds([]); setDownloadSelectedIds([]); }}>批量下载</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
       </section>
 
       {activeCategoryId && <div className="category-tools">
         {selectingImages ? <><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选' : `全选当前 ${visibleImages.length} 张`}</button><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button>{visibleImages.some((image) => image.categoryIds?.includes(activeCategoryId)) && <button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>从分类移除</button>}<button className="button ghost" onClick={() => { setSelectingImages(false); setSelectedImageIds([]); }}>完成</button></> : <><span>分类：{categories.find((category) => category.id === activeCategoryId)?.name}</span><button className="button ghost" onClick={() => { setSelectingImages(true); setSelectedImageIds([]); }}>选择图片</button></>}
       </div>}
 
+      {downloadMode && <div className="category-tools download-tools"><span>已选 {downloadSelectedIds.length} 张</span><button className="text-button" onClick={selectAllDownloadVisible}>{visibleImages.length > 0 && visibleImages.every((image) => downloadSelectedIds.includes(image.id)) ? '取消全选' : `全选当前 ${visibleImages.length} 张`}</button><button className="button primary" disabled={!downloadSelectedIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载已选图片'}</button><button className="button ghost" onClick={() => { setDownloadMode(false); setDownloadSelectedIds([]); }}>完成</button></div>}
+
       <section className="masonry" aria-label="图片瀑布流">
-        {visibleImages.map((image, index) => <article className={`image-card card-${index % 5} ${selectingImages && selectedImageIds.includes(image.id) ? 'image-selected' : ''}`} key={image.id}>
-          <button className="image-button" onClick={() => selectingImages ? toggleImageSelection(image.id) : void openImage(image)} aria-label={selectingImages ? `${selectedImageIds.includes(image.id) ? '取消选择' : '选择'} ${image.name}` : `放大查看 ${image.name}`}><img src={image.src} alt={image.name} />{selectingImages && <span className="selection-check">{selectedImageIds.includes(image.id) ? '✓' : ''}</span>}</button>
+        {visibleImages.map((image, index) => { const selectedForDownload = downloadSelectedIds.includes(image.id); const selectedForCategory = selectedImageIds.includes(image.id); const imageIsSelectable = selectingImages || downloadMode; return <article className={`image-card card-${index % 5} ${(selectingImages && selectedForCategory) || (downloadMode && selectedForDownload) ? 'image-selected' : ''}`} key={image.id}>
+          <button className="image-button" onClick={() => selectingImages ? toggleImageSelection(image.id) : downloadMode ? toggleDownloadSelection(image.id) : void openImage(image)} aria-label={imageIsSelectable ? `${(selectingImages ? selectedForCategory : selectedForDownload) ? '取消选择' : '选择'} ${image.name}` : `放大查看 ${image.name}`}><img src={image.src} alt={image.name} />{imageIsSelectable && <span className="selection-check">{(selectingImages ? selectedForCategory : selectedForDownload) ? '✓' : ''}</span>}</button>
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
-          <div className="vote-row"><div className="vote-buttons"><button className={image.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(image.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={image.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(image.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div>
-        </article>)}
+          <div className="vote-row"><div className="vote-buttons"><button className="vote download-button" onClick={() => downloadImage(image.id, image.name)} aria-label={`下载 ${image.name}`} title="下载"><Icon>↓</Icon></button><button className={image.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(image.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={image.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(image.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div>
+        </article>})}
         {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
