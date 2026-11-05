@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import { getDb } from '@/lib/db';
-import { requireAdmin } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireAdmin();
+    await requireUser();
     const { id } = await params;
     const { featured } = await request.json() as { featured: boolean };
     const db = await getDb();
