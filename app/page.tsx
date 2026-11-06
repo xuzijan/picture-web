@@ -63,7 +63,7 @@ export default function Home() {
   const [selectionRect, setSelectionRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const selectionRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
   const galleryRef = useRef<HTMLElement>(null);
-  const selectionDrag = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean } | null>(null);
+  const selectionDrag = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean; baseSelection: string[]; sweptIds: string[] } | null>(null);
   const ignoreSelectionClick = useRef(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -203,14 +203,14 @@ export default function Home() {
       })
       .map((card) => card.dataset.imageId)
       .filter((id): id is string => Boolean(id));
-    setSelectedImageIds((current) => Array.from(new Set([...current, ...selected])));
+    return selected;
   };
 
   const onGalleryPointerDown = (event: React.PointerEvent<HTMLElement>) => {
     if (!selectionMode || !galleryRef.current || event.pointerType === 'touch') return;
     const target = event.target as HTMLElement;
     if (target.closest('button') && !target.closest('.image-button')) return;
-    const point = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, moved: false };
+    const point = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, moved: false, baseSelection: [...selectedImageIds], sweptIds: [] as string[] };
     selectionDrag.current = point;
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -228,15 +228,19 @@ export default function Home() {
     const nextRect = { left, top, width: Math.abs(dx), height: Math.abs(dy) };
     selectionRectRef.current = nextRect;
     setSelectionRect(nextRect);
+    // Keep every image touched during the drag, even if the marquee later moves past it.
+    drag.sweptIds = Array.from(new Set([...drag.sweptIds, ...updateSelectionFromRectangle(nextRect)]));
+    setSelectedImageIds(Array.from(new Set([...drag.baseSelection, ...drag.sweptIds])));
   };
 
   const onGalleryPointerUp = (event: React.PointerEvent<HTMLElement>) => {
     const drag = selectionDrag.current;
     selectionDrag.current = null;
     if (!drag) return;
-    const rect = selectionRectRef.current;
-    if (drag.moved && rect) updateSelectionFromRectangle(rect);
-    if (drag.moved) ignoreSelectionClick.current = true;
+    if (drag.moved) {
+      ignoreSelectionClick.current = true;
+      window.setTimeout(() => { ignoreSelectionClick.current = false; }, 100);
+    }
     setSelectionRect(null);
     selectionRectRef.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
