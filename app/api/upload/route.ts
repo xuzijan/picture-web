@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { requireUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
@@ -13,14 +14,15 @@ export async function POST(request: Request) {
     const files = formData.getAll('files').filter((value): value is File => value instanceof File);
     if (!files.length) return NextResponse.json({ error: 'No image files provided' }, { status: 400 });
     const db = await getDb();
-    const records = [];
-    for (const file of files) {
-      if (!file.type.startsWith('image/')) continue;
+    const validFiles = files.filter((file) => file.type.startsWith('image/'));
+    const uploaded = await Promise.all(validFiles.map(async (file) => {
       const blob = await put(`gallery/${crypto.randomUUID()}-${file.name}`, file, { access: 'public' });
-      const record = { url: blob.url, pathname: blob.pathname, name: file.name, createdAt: new Date(), featured: false, uploadedBy: userId };
-      const inserted = await db.collection('images').insertOne(record);
-      records.push({ ...record, id: String(inserted.insertedId) });
-    }
+      return { url: blob.url, pathname: blob.pathname, name: file.name, createdAt: new Date(), featured: false, uploadedBy: userId };
+    }));
+    const insertedIds: Record<number, string> = uploaded.length
+      ? Object.fromEntries(Object.entries((await db.collection('images').insertMany(uploaded)).insertedIds).map(([index, id]) => [Number(index), String(id)]))
+      : {};
+    const records = uploaded.map((record, index) => ({ ...record, id: insertedIds[index] }));
     return NextResponse.json({ images: records }, { status: 201 });
   } catch (error) {
     const status = error instanceof Response ? error.status : 503;

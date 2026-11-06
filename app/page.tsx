@@ -250,19 +250,26 @@ export default function Home() {
     }
     if (connected) {
       setBusy(true);
-      setNotice('正在上传…');
+      setNotice(`正在上传 0/${pendingFiles.length}…`);
       try {
-        const formData = new FormData();
-        pendingFiles.forEach((file) => formData.append('files', file));
-        const response = await fetch('/api/upload', { method: 'POST', body: formData });
-        if (!response.ok) throw new Error('upload failed');
+        const uploadedFiles = [...pendingFiles];
+        const batchSize = 3;
+        for (let start = 0; start < uploadedFiles.length; start += batchSize) {
+          const batch = uploadedFiles.slice(start, start + batchSize);
+          const formData = new FormData();
+          batch.forEach((file) => formData.append('files', file));
+          const response = await fetch('/api/upload', { method: 'POST', body: formData });
+          const result = await response.json().catch(() => null);
+          if (!response.ok) throw new Error(result?.error || `第 ${start + 1}-${start + batch.length} 张上传失败`);
+          setNotice(`正在上传 ${Math.min(start + batch.length, uploadedFiles.length)}/${uploadedFiles.length}…`);
+        }
         const result = await fetch('/api/images');
         const remote = await result.json();
         setImages(remote.map((image: { id: string; url: string; name: string; createdAt: string; featured: boolean; vote: Vote }) => ({ ...image, src: image.url, createdAt: new Date(image.createdAt).getTime() })));
         setPendingFiles([]);
         setUploadOpen(false);
         setNotice('上传完成');
-      } catch { setNotice('上传失败，请检查存储配置'); }
+      } catch (error) { setNotice(error instanceof Error ? error.message : '上传失败，请检查存储配置'); }
       finally { setBusy(false); }
       return;
     }
