@@ -2,6 +2,7 @@
 
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Show, SignInButton, UserButton } from '@clerk/nextjs';
+import JSZip from 'jszip';
 
 type Vote = 'up' | 'down' | null;
 type GalleryComment = { id: string; userId: string; text: string; createdAt: string };
@@ -57,10 +58,13 @@ export default function Home() {
   const [categoryName, setCategoryName] = useState('');
   const [selectingImages, setSelectingImages] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
-  const [downloadMode, setDownloadMode] = useState(false);
-  const [downloadSelectedIds, setDownloadSelectedIds] = useState<string[]>([]);
+  const [selectionMode, setSelectionMode] = useState(false);
   const [downloadBusy, setDownloadBusy] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectionRect, setSelectionRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
+  const selectionRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
+  const galleryRef = useRef<HTMLElement>(null);
+  const selectionDrag = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean } | null>(null);
+  const ignoreSelectionClick = useRef(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [ready, setReady] = useState(false);
@@ -148,6 +152,7 @@ export default function Home() {
       setActiveCategoryId(category.id);
       setSelectedImageIds([]);
       setSelectingImages(true);
+      setSelectionMode(true);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : '创建分类失败');
     } finally { setCategoryBusy(false); }
@@ -187,36 +192,76 @@ export default function Home() {
       : Array.from(new Set([...current, ...visibleImages.map((image) => image.id)])));
   };
 
-  const toggleDownloadSelection = (id: string) => {
-    setDownloadSelectedIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  const activeSelection = selectedImageIds;
+
+  const updateSelectionFromRectangle = (selection: { left: number; top: number; width: number; height: number }) => {
+    const selected = Array.from(galleryRef.current?.querySelectorAll<HTMLElement>('[data-image-id]') || [])
+      .filter((card) => {
+        const rect = card.getBoundingClientRect();
+        return rect.left < selection.left + selection.width && rect.right > selection.left
+          && rect.top < selection.top + selection.height && rect.bottom > selection.top;
+      })
+      .map((card) => card.dataset.imageId)
+      .filter((id): id is string => Boolean(id));
+    setSelectedImageIds((current) => Array.from(new Set([...current, ...selected])));
   };
 
-  const selectAllDownloadVisible = () => {
-    const allSelected = visibleImages.every((image) => downloadSelectedIds.includes(image.id));
-    setDownloadSelectedIds((current) => allSelected
-      ? current.filter((id) => !visibleImages.some((image) => image.id === id))
-      : Array.from(new Set([...current, ...visibleImages.map((image) => image.id)])));
+  const onGalleryPointerDown = (event: React.PointerEvent<HTMLElement>) => {
+    if (!selectionMode || !galleryRef.current || event.pointerType === 'touch') return;
+    const target = event.target as HTMLElement;
+    if (target.closest('button') && !target.closest('.image-button')) return;
+    const point = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, moved: false };
+    selectionDrag.current = point;
+    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
-  const downloadImage = (id: string, name: string) => {
-    const link = document.createElement('a');
-    link.href = connected ? `/api/download?id=${encodeURIComponent(id)}` : images.find((image) => image.id === id)?.src || name;
-    link.download = name;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+  const onGalleryPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const drag = selectionDrag.current;
+    const gallery = galleryRef.current;
+    if (!drag || !gallery) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+    drag.moved = true;
+    const left = Math.min(drag.startX, event.clientX);
+    const top = Math.min(drag.startY, event.clientY);
+    const nextRect = { left, top, width: Math.abs(dx), height: Math.abs(dy) };
+    selectionRectRef.current = nextRect;
+    setSelectionRect(nextRect);
+  };
+
+  const onGalleryPointerUp = (event: React.PointerEvent<HTMLElement>) => {
+    const drag = selectionDrag.current;
+    selectionDrag.current = null;
+    if (!drag) return;
+    const rect = selectionRectRef.current;
+    if (drag.moved && rect) updateSelectionFromRectangle(rect);
+    if (drag.moved) ignoreSelectionClick.current = true;
+    setSelectionRect(null);
+    selectionRectRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   };
 
   const downloadSelected = async () => {
-    if (!downloadSelectedIds.length || downloadBusy) return;
+    const ids = activeSelection;
+    if (!ids.length || downloadBusy) return;
     setDownloadBusy(true);
     setNotice('正在准备下载…');
     try {
-      const query = downloadSelectedIds.map((id) => `id=${encodeURIComponent(id)}`).join('&');
-      const response = await fetch(`/api/download?${query}`);
-      if (!response.ok) throw new Error('下载失败，请重试');
-      const blob = await response.blob();
+      let blob: Blob;
+      if (connected) {
+        const query = ids.map((id) => `id=${encodeURIComponent(id)}`).join('&');
+        const response = await fetch(`/api/download?${query}`);
+        if (!response.ok) throw new Error('下载失败，请重试');
+        blob = await response.blob();
+      } else {
+        const zip = new JSZip();
+        await Promise.all(images.filter((image) => ids.includes(image.id)).map(async (image, index) => {
+          const response = await fetch(image.src);
+          zip.file(image.name || `image-${index + 1}`, await response.blob());
+        }));
+        blob = await zip.generateAsync({ type: 'blob' });
+      }
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -225,12 +270,53 @@ export default function Home() {
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      setNotice(`已准备 ${downloadSelectedIds.length} 张图片`);
-      setDownloadSelectedIds([]);
-      setDownloadMode(false);
+      setNotice(`已准备 ${ids.length} 张图片`);
+      setSelectedImageIds([]);
+      setSelectionMode(false);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : '下载失败，请重试');
     } finally { setDownloadBusy(false); }
+  };
+
+  const applyVoteToSelected = async (vote: 'up' | 'down') => {
+    const ids = [...activeSelection];
+    if (!ids.length) return;
+    setBusy(true);
+    try {
+      const outcomes = await Promise.all(ids.map(async (id) => {
+        if (!connected) return { id, ok: true };
+        try { return { id, ok: (await fetch(`/api/images/${id}/vote`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value: vote }) })).ok }; }
+        catch { return { id, ok: false }; }
+      }));
+      const updatedIds = outcomes.filter((result) => result.ok).map((result) => result.id);
+      setImages((current) => current.map((image) => updatedIds.includes(image.id) ? { ...image, vote } : image));
+      setSelected((current) => current && updatedIds.includes(current.id) ? { ...current, vote } : current);
+      setSelectedImageIds(outcomes.filter((result) => !result.ok).map((result) => result.id));
+      setNotice(updatedIds.length === ids.length ? `已为 ${ids.length} 张图片设置${vote === 'up' ? '认可' : '不认可'}` : `${updatedIds.length} 张已更新，${ids.length - updatedIds.length} 张失败；失败项仍保持选中`);
+    } catch (error) { setNotice(error instanceof Error ? error.message : '批量标记失败'); }
+    finally { setBusy(false); }
+  };
+
+  const deleteSelected = async () => {
+    const ids = [...activeSelection];
+    if (!ids.length || busy || !window.confirm(`确定删除选中的 ${ids.length} 张图片吗？此操作无法恢复。`)) return;
+    setBusy(true);
+    try {
+      const outcomes = await Promise.all(ids.map(async (id) => {
+        if (!connected) return { id, ok: true };
+        try { return { id, ok: (await fetch(`/api/images/${encodeURIComponent(id)}`, { method: 'DELETE' })).ok }; }
+        catch { return { id, ok: false }; }
+      }));
+      const deletedIds = outcomes.filter((result) => result.ok).map((result) => result.id);
+      if (deletedIds.length) {
+        setImages((current) => current.filter((image) => !deletedIds.includes(image.id)));
+        setCategories((current) => current.map((category) => ({ ...category, count: Math.max(0, category.count - images.filter((image) => deletedIds.includes(image.id) && image.categoryIds?.includes(category.id)).length) })));
+      }
+      setSelected((current) => current && deletedIds.includes(current.id) ? null : current);
+      setSelectedImageIds(outcomes.filter((result) => !result.ok).map((result) => result.id));
+      setNotice(deletedIds.length === ids.length ? `已删除 ${deletedIds.length} 张图片` : `成功删除 ${deletedIds.length} 张，${ids.length - deletedIds.length} 张失败；失败项仍保持选中`);
+    } catch (error) { setNotice(error instanceof Error ? error.message : '批量删除失败'); }
+    finally { setBusy(false); }
   };
 
   const addFiles = (files: FileList | File[]) => {
@@ -305,28 +391,6 @@ export default function Home() {
     if (connected) fetch(`/api/images/${id}/feature`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ featured: nextFeatured }) }).catch(() => setNotice('精选状态保存失败'));
   };
 
-  const deleteImage = async (image: GalleryImage) => {
-    if (deletingId || !window.confirm(`确定删除“${image.name}”吗？删除后无法恢复。`)) return;
-    setDeletingId(image.id);
-    try {
-      if (connected) {
-        const response = await fetch(`/api/images/${encodeURIComponent(image.id)}`, { method: 'DELETE' });
-        const result = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(result?.error || '删除失败，请重试');
-      }
-      setImages((current) => current.filter((item) => item.id !== image.id));
-      setCategories((current) => current.map((category) => ({
-        ...category,
-        count: image.categoryIds?.includes(category.id) ? Math.max(0, category.count - 1) : category.count,
-      })));
-      setDownloadSelectedIds((current) => current.filter((id) => id !== image.id));
-      setSelected((current) => current?.id === image.id ? null : current);
-      setNotice('图片已删除');
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : '删除失败，请重试');
-    } finally { setDeletingId(null); }
-  };
-
   const openImage = async (image: GalleryImage) => {
     setSelected(image);
     setCommentText('');
@@ -379,27 +443,23 @@ export default function Home() {
 
       <section className="toolbar" id="gallery">
         <div className="filter-tabs">
-          <button className={activeFilter === 'all' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(null); setSelectingImages(false); setSelectedImageIds([]); }}>全部图片 <b>{images.length}</b></button>
-          <button className={activeFilter === 'featured' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('featured'); setActiveCategoryId(null); setSelectingImages(false); setSelectedImageIds([]); }}>精选 <b>{images.filter((image) => image.featured).length}</b></button>
-          {categories.map((category) => <button key={category.id} className={activeCategoryId === category.id ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(category.id); setSelectingImages(false); setSelectedImageIds([]); }}>{category.name} <b>{category.count}</b></button>)}
+          <button className={activeFilter === 'all' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(null); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>全部图片 <b>{images.length}</b></button>
+          <button className={activeFilter === 'featured' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('featured'); setActiveCategoryId(null); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>精选 <b>{images.filter((image) => image.featured).length}</b></button>
+          {categories.map((category) => <button key={category.id} className={activeCategoryId === category.id ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(category.id); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>{category.name} <b>{category.count}</b></button>)}
           <button className="tab add-category-tab" onClick={() => setCategoryModalOpen(true)} aria-label="新建分类" title="新建分类">＋</button>
         </div>
         <label className="search-box"><span aria-hidden="true" className="search-icon">⌕</span><input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="搜索图片名称" aria-label="搜索图片名称" />{searchTerm && <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="清除搜索">×</button>}</label>
-        <div className="toolbar-end">{connected && authenticated && <button className="button ghost download-entry" onClick={() => { setDownloadMode(true); setSelectingImages(false); setSelectedImageIds([]); setDownloadSelectedIds([]); }}>批量下载</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
+        <div className="toolbar-end">{!selectionMode ? <button className="button ghost download-entry" onClick={() => { setSelectionMode(true); setSelectingImages(Boolean(activeCategoryId)); setSelectedImageIds([]); }}>选择图片</button> : <button className="button ghost download-entry" onClick={() => { setSelectionMode(false); setSelectingImages(false); setSelectedImageIds([]); }}>取消选择</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
       </section>
 
-      {activeCategoryId && <div className="category-tools">
-        {selectingImages ? <><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选' : `全选当前 ${visibleImages.length} 张`}</button><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button>{visibleImages.some((image) => image.categoryIds?.includes(activeCategoryId)) && <button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>从分类移除</button>}<button className="button ghost" onClick={() => { setSelectingImages(false); setSelectedImageIds([]); }}>完成</button></> : <><span>分类：{categories.find((category) => category.id === activeCategoryId)?.name}</span><button className="button ghost" onClick={() => { setSelectingImages(true); setSelectedImageIds([]); }}>选择图片</button></>}
-      </div>}
+      {selectionMode && <div className="category-tools selection-tools"><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!selectedImageIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button><button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button></>}<button className="button danger" disabled={!selectedImageIds.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
-      {downloadMode && <div className="category-tools download-tools"><span>已选 {downloadSelectedIds.length} 张</span><button className="text-button" onClick={selectAllDownloadVisible}>{visibleImages.length > 0 && visibleImages.every((image) => downloadSelectedIds.includes(image.id)) ? '取消全选' : `全选当前 ${visibleImages.length} 张`}</button><button className="button primary" disabled={!downloadSelectedIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载已选图片'}</button><button className="button ghost" onClick={() => { setDownloadMode(false); setDownloadSelectedIds([]); }}>完成</button></div>}
-
-      <section className="masonry" aria-label="图片瀑布流">
-        {visibleImages.map((image, index) => { const selectedForDownload = downloadSelectedIds.includes(image.id); const selectedForCategory = selectedImageIds.includes(image.id); const imageIsSelectable = selectingImages || downloadMode; return <article className={`image-card card-${index % 5} ${(selectingImages && selectedForCategory) || (downloadMode && selectedForDownload) ? 'image-selected' : ''}`} key={image.id}>
-          <button className="image-button" onClick={() => selectingImages ? toggleImageSelection(image.id) : downloadMode ? toggleDownloadSelection(image.id) : void openImage(image)} aria-label={imageIsSelectable ? `${(selectingImages ? selectedForCategory : selectedForDownload) ? '取消选择' : '选择'} ${image.name}` : `放大查看 ${image.name}`}><img src={image.src} alt={image.name} />{imageIsSelectable && <span className="selection-check">{(selectingImages ? selectedForCategory : selectedForDownload) ? '✓' : ''}</span>}</button>
+      <section className={`masonry ${selectionMode ? 'selection-active' : ''}`} aria-label="图片瀑布流" ref={galleryRef} onPointerDown={onGalleryPointerDown} onPointerMove={onGalleryPointerMove} onPointerUp={onGalleryPointerUp} onPointerCancel={onGalleryPointerUp}>
+        {visibleImages.map((image, index) => { const isSelected = selectedImageIds.includes(image.id); return <article className={`image-card card-${index % 5} ${isSelected ? 'image-selected' : ''}`} data-image-id={image.id} key={image.id}>
+          <button className="image-button" onClick={() => { if (ignoreSelectionClick.current) { ignoreSelectionClick.current = false; return; } selectionMode ? toggleImageSelection(image.id) : void openImage(image); }} aria-label={selectionMode ? `${isSelected ? '取消选择' : '选择'} ${image.name}` : `放大查看 ${image.name}`}><img src={image.src} alt={image.name} />{selectionMode && <span className="selection-check">{isSelected ? '✓' : ''}</span>}</button>
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
-          <div className="vote-row"><div className="vote-buttons"><button className="vote delete-button" onClick={() => void deleteImage(image)} disabled={deletingId === image.id} aria-label={`删除 ${image.name}`} title="删除"><Icon>⌫</Icon></button><button className="vote download-button" onClick={() => downloadImage(image.id, image.name)} aria-label={`下载 ${image.name}`} title="下载"><Icon>↓</Icon></button><button className={image.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(image.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={image.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(image.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div>
         </article>})}
+        {selectionRect && <div className="selection-rectangle" style={{ left: selectionRect.left, top: selectionRect.top, width: selectionRect.width, height: selectionRect.height }} />}
         {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
