@@ -29,3 +29,9 @@ npm run dev
 - `DELETE /api/images/:id`：登录用户删除图片及其关联的投票、评论、分类关系和存储文件
 
 `ADMIN_USER_IDS` 可选，用于显示管理员身份标识；上传和设置精选已对所有登录用户开放。当前页面仍保留本地演示数据，等 Clerk 和数据库变量配置完成后再切换到 API 数据源。
+
+## 最新批次物体标签
+
+图片详情下方显示中文主物体、副物体数量及名单。`lib/latest-batch-tags.json` 来自 2026-11-09 MOSS 翻新 100 例的 `plans.jsonl`，按对应原始 PNG 的 SHA-256 建索引（50 条无副物体，50 条一个副物体）。来源图集：https://ycn3t1n3rlnx.feishu.cn/wiki/IuKIw9cc9ipTJPkv61EcIacYnwh 。
+
+登录后详情请求 `/api/images/:id/tags`，服务端读取数据库中的 Blob 原图并匹配文件指纹；不依据通用 sample 文件名猜测批次。不匹配的旧图不显示标签，重新压缩或修改过的文件也不会误匹配。查询结果有进程内缓存，不修改图片、投票或评论数据。

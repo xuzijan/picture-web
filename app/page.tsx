@@ -4,6 +4,8 @@ import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 're
 import { Show, SignInButton, UserButton } from '@clerk/nextjs';
 import JSZip from 'jszip';
 
+type SubjectTags = { mainSubject: string; secondarySubjects: string[] };
+
 type Vote = 'up' | 'down' | null;
 type GalleryComment = { id: string; userId: string; text: string; createdAt: string };
 type GalleryCategory = { id: string; name: string; count: number };
@@ -75,6 +77,19 @@ export default function Home() {
   const [notice, setNotice] = useState('');
   const [commentText, setCommentText] = useState('');
   const [commentBusy, setCommentBusy] = useState(false);
+  const [subjectTags, setSubjectTags] = useState<SubjectTags | null>(null);
+  const [tagsError, setTagsError] = useState(false);
+  useEffect(() => {
+    setSubjectTags(null);
+    setTagsError(false);
+    if (!selected || !connected) return;
+    const controller = new AbortController();
+    fetch(`/api/images/${selected.id}/tags`, { signal: controller.signal })
+      .then((response) => { if (!response.ok) throw new Error('tags'); return response.json(); })
+      .then((tags) => { if (!controller.signal.aborted) setSubjectTags(tags); })
+      .catch(() => { if (!controller.signal.aborted) setTagsError(true); });
+    return () => controller.abort();
+  }, [selected?.id, connected]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -473,7 +488,7 @@ export default function Home() {
 
       {categoryModalOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setCategoryModalOpen(false)}><form className="modal" role="dialog" aria-modal="true" aria-labelledby="category-title" onSubmit={(event) => void createCategory(event)}><div className="modal-head"><div><p className="eyebrow">IMAGE COLLECTION</p><h2 id="category-title">新建分类</h2></div><button type="button" className="close" onClick={() => setCategoryModalOpen(false)}>×</button></div><label className="category-name-field">分类名称<input autoFocus value={categoryName} onChange={(event) => setCategoryName(event.target.value)} maxLength={40} placeholder="例如：千问生成图" /></label><div className="modal-actions"><button type="button" className="button ghost" onClick={() => setCategoryModalOpen(false)}>取消</button><button className="button primary" disabled={!categoryName.trim() || categoryBusy}>{categoryBusy ? '创建中…' : '创建分类'}</button></div></form></div>}
 
-      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><div className="lightbox-main"><img src={selected.src} alt={selected.name} /><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div></div><aside className="comments-panel"><h3>评论 <span>{selected.comments?.length ?? 0}</span></h3><div className="comment-list">{selected.comments?.length ? selected.comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-meta"><span>{comment.userId === '本地用户' ? comment.userId : `${comment.userId.slice(0, 10)}…`}</span><time>{new Date(comment.createdAt).toLocaleString()}</time></div><p>{comment.text}</p></article>) : <p className="empty-comments">还没有评论</p>}</div><form className="comment-form" onSubmit={(event) => { event.preventDefault(); void submitComment(); }}><textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder="写下你的想法…" aria-label="评论内容" /><div><span>{commentText.length}/1000</span><button className="button primary" disabled={!commentText.trim() || commentBusy}>{commentBusy ? '发送中…' : '发送'}</button></div></form></aside></div></div>}
+      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><div className="lightbox-main"><img src={selected.src} alt={selected.name} /><div className="subject-tags" aria-label="图片物体标签">{subjectTags && <><span>主物体：{subjectTags.mainSubject}</span><span>{subjectTags.secondarySubjects.length ? `副物体：${subjectTags.secondarySubjects.length} 个` : '没有副物体'}</span>{subjectTags.secondarySubjects.length > 0 && <span>副物体：{subjectTags.secondarySubjects.join('、')}</span>}</>}{tagsError && <small>标签暂时加载失败，请重新打开图片</small>}</div><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div></div><aside className="comments-panel"><h3>评论 <span>{selected.comments?.length ?? 0}</span></h3><div className="comment-list">{selected.comments?.length ? selected.comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-meta"><span>{comment.userId === '本地用户' ? comment.userId : `${comment.userId.slice(0, 10)}…`}</span><time>{new Date(comment.createdAt).toLocaleString()}</time></div><p>{comment.text}</p></article>) : <p className="empty-comments">还没有评论</p>}</div><form className="comment-form" onSubmit={(event) => { event.preventDefault(); void submitComment(); }}><textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder="写下你的想法…" aria-label="评论内容" /><div><span>{commentText.length}/1000</span><button className="button primary" disabled={!commentText.trim() || commentBusy}>{commentBusy ? '发送中…' : '发送'}</button></div></form></aside></div></div>}
     </main>
   );
 }
