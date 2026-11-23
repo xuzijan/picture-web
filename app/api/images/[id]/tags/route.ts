@@ -18,6 +18,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const db = await getDb();
     const image = await db.collection('images').findOne({ _id: new ObjectId(id) });
     if (!image) return NextResponse.json({ error: 'Image not found' }, { status: 404 });
+    if (typeof image.subjectTagsHash === 'string') return NextResponse.json(tagsByHash[image.subjectTagsHash] ?? null);
     const url = new URL(image.url);
     if (url.protocol !== 'https:' || !url.hostname.endsWith('.public.blob.vercel-storage.com')) {
       return NextResponse.json(null);
@@ -27,6 +28,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     if (!response.ok) throw new Error('Image download failed');
     const hash = createHash('sha256').update(Buffer.from(await response.arrayBuffer())).digest('hex');
     const tags = tagsByHash[hash] ?? null;
+    await db.collection('images').updateOne({ _id: image._id, url: image.url }, { $set: { subjectTagsHash: hash } });
     if (cache.size >= 1000) cache.clear();
     cache.set(url.href, tags);
     return NextResponse.json(tags);

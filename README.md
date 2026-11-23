@@ -35,3 +35,5 @@ npm run dev
 图片详情下方显示中文主物体、副物体数量及名单。`lib/latest-batch-tags.json` 来自 2026-11-09 MOSS 翻新 100 例的 `plans.jsonl`，按对应原始 PNG 的 SHA-256 建索引（50 条无副物体，50 条一个副物体）。来源图集：https://ycn3t1n3rlnx.feishu.cn/wiki/IuKIw9cc9ipTJPkv61EcIacYnwh 。
 
 登录后详情请求 `/api/images/:id/tags`，服务端读取数据库中的 Blob 原图并匹配文件指纹；不依据通用 sample 文件名猜测批次。不匹配的旧图不显示标签，重新压缩或修改过的文件也不会误匹配。查询结果有进程内缓存，不修改图片、投票或评论数据。
+
+副物体数量筛选支持全部、0、1、2、3，可叠加分类、精选和名称搜索。未标注图片仅显示在全部中。首次筛选以四路并发解析标签，失败可重试；原图指纹写入数据库 subjectTagsHash，后续读取直接查标签清单。

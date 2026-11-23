@@ -68,6 +68,11 @@ export default function Home() {
   const selectionDrag = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean; baseSelection: string[]; sweptIds: string[] } | null>(null);
   const ignoreSelectionClick = useRef(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
+  const [secondaryCount, setSecondaryCount] = useState<string>('all');
+  const [imageTags, setImageTags] = useState<Record<string, SubjectTags | null>>({});
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [filterError, setFilterError] = useState(false);
+  const [filterRetry, setFilterRetry] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [ready, setReady] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -90,6 +95,31 @@ export default function Home() {
       .catch(() => { if (!controller.signal.aborted) setTagsError(true); });
     return () => controller.abort();
   }, [selected?.id, connected]);
+  useEffect(() => {
+    if (secondaryCount === 'all' || !connected) { setFilterLoading(false); return; }
+    const controller = new AbortController();
+    const pending = images.filter((image) => !(image.id in imageTags));
+    setFilterLoading(pending.length > 0);
+    setFilterError(false);
+    let cursor = 0;
+    async function worker() {
+      while (cursor < pending.length && !controller.signal.aborted) {
+        const image = pending[cursor++];
+        try {
+          const response = await fetch(`/api/images/${image.id}/tags`, { signal: controller.signal });
+          if (!response.ok) throw new Error('tags');
+          const tags: SubjectTags | null = await response.json();
+          if (!controller.signal.aborted) setImageTags((current) => ({ ...current, [image.id]: tags }));
+        } catch { if (!controller.signal.aborted) setFilterError(true); }
+      }
+    }
+    void Promise.all(Array.from({ length: 4 }, worker)).then(() => {
+      if (!controller.signal.aborted) setFilterLoading(false);
+    });
+    return () => controller.abort();
+    // Workers accumulate results without restarting the queue on each response.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondaryCount, connected, images, filterRetry]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -135,10 +165,11 @@ export default function Home() {
   const visibleImages = useMemo(
     () => images
       .filter((image) => activeFilter === 'all' || image.featured)
+      .filter((image) => secondaryCount === 'all' || imageTags[image.id]?.secondarySubjects.length === Number(secondaryCount))
       .filter((image) => selectingImages || !activeCategoryId || image.categoryIds?.includes(activeCategoryId))
       .filter((image) => image.name.toLocaleLowerCase().includes(searchTerm.trim().toLocaleLowerCase()))
       .sort((a, b) => b.createdAt - a.createdAt),
-    [images, activeFilter, activeCategoryId, selectingImages, searchTerm],
+    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount, imageTags],
   );
 
   const toggleImageSelection = (id: string) => {
@@ -467,10 +498,11 @@ export default function Home() {
           {categories.map((category) => <button key={category.id} className={activeCategoryId === category.id ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(category.id); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>{category.name} <b>{category.count}</b></button>)}
           <button className="tab add-category-tab" onClick={() => setCategoryModalOpen(true)} aria-label="新建分类" title="新建分类">＋</button>
         </div>
-        <label className="search-box"><span aria-hidden="true" className="search-icon">⌕</span><input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="搜索图片名称" aria-label="搜索图片名称" />{searchTerm && <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="清除搜索">×</button>}</label>
+        <label className="secondary-filter">副物体数量<select aria-label="副物体数量" value={secondaryCount} onChange={(event) => { setSecondaryCount(event.target.value); setSelectedImageIds([]); }}><option value="all">全部</option>{[0, 1, 2, 3].map((count) => <option key={count} value={count}>{count} 个</option>)}</select></label><label className="search-box"><span aria-hidden="true" className="search-icon">⌕</span><input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="搜索图片名称" aria-label="搜索图片名称" />{searchTerm && <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="清除搜索">×</button>}</label>
         <div className="toolbar-end">{!selectionMode ? <button className="button ghost download-entry" onClick={() => { setSelectionMode(true); setSelectingImages(Boolean(activeCategoryId)); setSelectedImageIds([]); }}>选择图片</button> : <button className="button ghost download-entry" onClick={() => { setSelectionMode(false); setSelectingImages(false); setSelectedImageIds([]); }}>取消选择</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
       </section>
 
+      {secondaryCount !== 'all' && <div className="filter-status" role="status">{filterLoading ? '正在读取物体标签…' : `匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败 <button className="text-button" onClick={() => setFilterRetry((value) => value + 1)}>重试</button></>}</div>}
       {selectionMode && <div className="category-tools selection-tools"><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!selectedImageIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button><button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button></>}<button className="button danger" disabled={!selectedImageIds.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
       <section className={`masonry ${selectionMode ? 'selection-active' : ''}`} aria-label="图片瀑布流" ref={galleryRef} onPointerDown={onGalleryPointerDown} onPointerMove={onGalleryPointerMove} onPointerUp={onGalleryPointerUp} onPointerCancel={onGalleryPointerUp}>
@@ -479,7 +511,7 @@ export default function Home() {
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
         </article>})}
         {selectionRect && <div className="selection-rectangle" style={{ left: selectionRect.left, top: selectionRect.top, width: selectionRect.width, height: selectionRect.height }} />}
-        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
+        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : secondaryCount !== 'all' ? (filterLoading ? '正在读取物体标签…' : filterError ? '部分标签未能加载，请点击重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
       <footer><span><span className="footer-dot" />{authenticated && !connected ? '云端连接异常' : connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : authenticated ? '云端数据未加载，本地操作已暂停' : '图片只保存在当前浏览器')}</span></footer>
