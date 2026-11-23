@@ -1,3 +1,4 @@
+import { hashImage, tagsForHash } from '@/lib/subject-tags';
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { getDb } from '@/lib/db';
@@ -16,8 +17,9 @@ export async function POST(request: Request) {
     const db = await getDb();
     const validFiles = files.filter((file) => file.type.startsWith('image/'));
     const uploaded = await Promise.all(validFiles.map(async (file) => {
+      const subjectTagsHash = hashImage(await file.arrayBuffer());
       const blob = await put(`gallery/${crypto.randomUUID()}-${file.name}`, file, { access: 'public' });
-      return { url: blob.url, pathname: blob.pathname, name: file.name, createdAt: new Date(), featured: false, uploadedBy: userId };
+      return { subjectTagsHash, subjectTags: tagsForHash(subjectTagsHash), url: blob.url, pathname: blob.pathname, name: file.name, createdAt: new Date(), featured: false, uploadedBy: userId };
     }));
     const insertedIds: Record<number, string> = uploaded.length
       ? Object.fromEntries(Object.entries((await db.collection('images').insertMany(uploaded)).insertedIds).map(([index, id]) => [Number(index), String(id)]))

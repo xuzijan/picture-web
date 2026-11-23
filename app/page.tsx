@@ -18,6 +18,8 @@ type GalleryImage = {
   vote: Vote;
   comments?: GalleryComment[];
   categoryIds?: string[];
+  subjectTags?: SubjectTags | null;
+  tagsLoadError?: boolean;
 };
 
 const STORE_KEY = 'frameflow-gallery-v1';
@@ -69,10 +71,6 @@ export default function Home() {
   const ignoreSelectionClick = useRef(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
   const [secondaryCount, setSecondaryCount] = useState<string>('all');
-  const [imageTags, setImageTags] = useState<Record<string, SubjectTags | null>>({});
-  const [filterLoading, setFilterLoading] = useState(false);
-  const [filterError, setFilterError] = useState(false);
-  const [filterRetry, setFilterRetry] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [ready, setReady] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -82,44 +80,9 @@ export default function Home() {
   const [notice, setNotice] = useState('');
   const [commentText, setCommentText] = useState('');
   const [commentBusy, setCommentBusy] = useState(false);
-  const [subjectTags, setSubjectTags] = useState<SubjectTags | null>(null);
-  const [tagsError, setTagsError] = useState(false);
-  useEffect(() => {
-    setSubjectTags(null);
-    setTagsError(false);
-    if (!selected || !connected) return;
-    const controller = new AbortController();
-    fetch(`/api/images/${selected.id}/tags`, { signal: controller.signal })
-      .then((response) => { if (!response.ok) throw new Error('tags'); return response.json(); })
-      .then((tags) => { if (!controller.signal.aborted) setSubjectTags(tags); })
-      .catch(() => { if (!controller.signal.aborted) setTagsError(true); });
-    return () => controller.abort();
-  }, [selected?.id, connected]);
-  useEffect(() => {
-    if (secondaryCount === 'all' || !connected) { setFilterLoading(false); return; }
-    const controller = new AbortController();
-    const pending = images.filter((image) => !(image.id in imageTags));
-    setFilterLoading(pending.length > 0);
-    setFilterError(false);
-    let cursor = 0;
-    async function worker() {
-      while (cursor < pending.length && !controller.signal.aborted) {
-        const image = pending[cursor++];
-        try {
-          const response = await fetch(`/api/images/${image.id}/tags`, { signal: controller.signal });
-          if (!response.ok) throw new Error('tags');
-          const tags: SubjectTags | null = await response.json();
-          if (!controller.signal.aborted) setImageTags((current) => ({ ...current, [image.id]: tags }));
-        } catch { if (!controller.signal.aborted) setFilterError(true); }
-      }
-    }
-    void Promise.all(Array.from({ length: 4 }, worker)).then(() => {
-      if (!controller.signal.aborted) setFilterLoading(false);
-    });
-    return () => controller.abort();
-    // Workers accumulate results without restarting the queue on each response.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secondaryCount, connected, images, filterRetry]);
+  const subjectTags = selected?.subjectTags;
+  const tagsError = selected?.tagsLoadError;
+  const filterError = images.some((image) => image.tagsLoadError);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -165,11 +128,11 @@ export default function Home() {
   const visibleImages = useMemo(
     () => images
       .filter((image) => activeFilter === 'all' || image.featured)
-      .filter((image) => secondaryCount === 'all' || imageTags[image.id]?.secondarySubjects.length === Number(secondaryCount))
+      .filter((image) => secondaryCount === 'all' || image.subjectTags?.secondarySubjects.length === Number(secondaryCount))
       .filter((image) => selectingImages || !activeCategoryId || image.categoryIds?.includes(activeCategoryId))
       .filter((image) => image.name.toLocaleLowerCase().includes(searchTerm.trim().toLocaleLowerCase()))
       .sort((a, b) => b.createdAt - a.createdAt),
-    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount, imageTags],
+    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount],
   );
 
   const toggleImageSelection = (id: string) => {
@@ -502,7 +465,7 @@ export default function Home() {
         <div className="toolbar-end">{!selectionMode ? <button className="button ghost download-entry" onClick={() => { setSelectionMode(true); setSelectingImages(Boolean(activeCategoryId)); setSelectedImageIds([]); }}>选择图片</button> : <button className="button ghost download-entry" onClick={() => { setSelectionMode(false); setSelectingImages(false); setSelectedImageIds([]); }}>取消选择</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
       </section>
 
-      {secondaryCount !== 'all' && <div className="filter-status" role="status">{filterLoading ? '正在读取物体标签…' : `匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败 <button className="text-button" onClick={() => setFilterRetry((value) => value + 1)}>重试</button></>}</div>}
+      {secondaryCount !== 'all' && <div className="filter-status" role="status">{`匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败，请刷新页面重试</>}</div>}
       {selectionMode && <div className="category-tools selection-tools"><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!selectedImageIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button><button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button></>}<button className="button danger" disabled={!selectedImageIds.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
       <section className={`masonry ${selectionMode ? 'selection-active' : ''}`} aria-label="图片瀑布流" ref={galleryRef} onPointerDown={onGalleryPointerDown} onPointerMove={onGalleryPointerMove} onPointerUp={onGalleryPointerUp} onPointerCancel={onGalleryPointerUp}>
@@ -511,7 +474,7 @@ export default function Home() {
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
         </article>})}
         {selectionRect && <div className="selection-rectangle" style={{ left: selectionRect.left, top: selectionRect.top, width: selectionRect.width, height: selectionRect.height }} />}
-        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : secondaryCount !== 'all' ? (filterLoading ? '正在读取物体标签…' : filterError ? '部分标签未能加载，请点击重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
+        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : secondaryCount !== 'all' ? (filterError ? '部分标签未能加载，请刷新页面重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
       <footer><span><span className="footer-dot" />{authenticated && !connected ? '云端连接异常' : connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : authenticated ? '云端数据未加载，本地操作已暂停' : '图片只保存在当前浏览器')}</span></footer>
@@ -520,7 +483,7 @@ export default function Home() {
 
       {categoryModalOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setCategoryModalOpen(false)}><form className="modal" role="dialog" aria-modal="true" aria-labelledby="category-title" onSubmit={(event) => void createCategory(event)}><div className="modal-head"><div><p className="eyebrow">IMAGE COLLECTION</p><h2 id="category-title">新建分类</h2></div><button type="button" className="close" onClick={() => setCategoryModalOpen(false)}>×</button></div><label className="category-name-field">分类名称<input autoFocus value={categoryName} onChange={(event) => setCategoryName(event.target.value)} maxLength={40} placeholder="例如：千问生成图" /></label><div className="modal-actions"><button type="button" className="button ghost" onClick={() => setCategoryModalOpen(false)}>取消</button><button className="button primary" disabled={!categoryName.trim() || categoryBusy}>{categoryBusy ? '创建中…' : '创建分类'}</button></div></form></div>}
 
-      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><div className="lightbox-main"><img src={selected.src} alt={selected.name} /><div className="subject-tags" aria-label="图片物体标签">{subjectTags && <><span>主物体：{subjectTags.mainSubject}</span><span>{subjectTags.secondarySubjects.length ? `副物体：${subjectTags.secondarySubjects.length} 个` : '没有副物体'}</span>{subjectTags.secondarySubjects.length > 0 && <span>副物体：{subjectTags.secondarySubjects.join('、')}</span>}</>}{tagsError && <small>标签暂时加载失败，请重新打开图片</small>}</div><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div></div><aside className="comments-panel"><h3>评论 <span>{selected.comments?.length ?? 0}</span></h3><div className="comment-list">{selected.comments?.length ? selected.comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-meta"><span>{comment.userId === '本地用户' ? comment.userId : `${comment.userId.slice(0, 10)}…`}</span><time>{new Date(comment.createdAt).toLocaleString()}</time></div><p>{comment.text}</p></article>) : <p className="empty-comments">还没有评论</p>}</div><form className="comment-form" onSubmit={(event) => { event.preventDefault(); void submitComment(); }}><textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder="写下你的想法…" aria-label="评论内容" /><div><span>{commentText.length}/1000</span><button className="button primary" disabled={!commentText.trim() || commentBusy}>{commentBusy ? '发送中…' : '发送'}</button></div></form></aside></div></div>}
+      {selected && <div className="lightbox" onMouseDown={(event) => event.target === event.currentTarget && setSelected(null)}><button className="lightbox-close" onClick={() => setSelected(null)}>×</button><div className="lightbox-content"><div className="lightbox-main"><img src={selected.src} alt={selected.name} /><div className="subject-tags" aria-label="图片物体标签">{subjectTags && <><span>主物体：{subjectTags.mainSubject}</span><span>{subjectTags.secondarySubjects.length ? `副物体：${subjectTags.secondarySubjects.length} 个` : '没有副物体'}</span>{subjectTags.secondarySubjects.length > 0 && <span>副物体：{subjectTags.secondarySubjects.join('、')}</span>}</>}{tagsError && <small>标签暂时加载失败，请刷新页面重试</small>}</div><div className="lightbox-info"><h2>{selected.name}</h2><div className="lightbox-votes"><button className={selected.vote === 'up' ? 'vote selected-up' : 'vote'} onClick={() => updateVote(selected.id, 'up')} aria-label="认可" title="认可"><Icon>✓</Icon></button><button className={selected.vote === 'down' ? 'vote selected-down' : 'vote'} onClick={() => updateVote(selected.id, 'down')} aria-label="不认可" title="不认可"><Icon>×</Icon></button></div></div></div><aside className="comments-panel"><h3>评论 <span>{selected.comments?.length ?? 0}</span></h3><div className="comment-list">{selected.comments?.length ? selected.comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-meta"><span>{comment.userId === '本地用户' ? comment.userId : `${comment.userId.slice(0, 10)}…`}</span><time>{new Date(comment.createdAt).toLocaleString()}</time></div><p>{comment.text}</p></article>) : <p className="empty-comments">还没有评论</p>}</div><form className="comment-form" onSubmit={(event) => { event.preventDefault(); void submitComment(); }}><textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} maxLength={1000} placeholder="写下你的想法…" aria-label="评论内容" /><div><span>{commentText.length}/1000</span><button className="button primary" disabled={!commentText.trim() || commentBusy}>{commentBusy ? '发送中…' : '发送'}</button></div></form></aside></div></div>}
     </main>
   );
 }
