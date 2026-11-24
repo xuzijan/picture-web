@@ -1,0 +1,2922 @@
+{
+  "version": "WordNet 3.0",
+  "batch": "MOSS 2026-11-09 · 100 张",
+  "source": "https://ycn3t1n3rlnx.feishu.cn/wiki/BgQfwz5ntiPw7akiI33crzjFnve",
+  "labels": {
+    "abstraction.n.06": "抽象实体",
+    "adornment.n.01": "佩饰",
+    "agaric.n.02": "伞菌",
+    "aircraft.n.01": "aircraft",
+    "aloe.n.01": "aloe",
+    "amphibian.n.03": "amphibian",
+    "anapsid.n.01": "anapsid",
+    "anemone_fish.n.01": "anemone fish",
+    "angiospermous_tree.n.01": "angiospermous tree",
+    "animal.n.01": "动物",
+    "anseriform_bird.n.01": "anseriform bird",
+    "ant.n.01": "蚂蚁",
+    "anthropoid_ape.n.01": "anthropoid ape",
+    "ape.n.01": "ape",
+    "appliance.n.02": "家用器具",
+    "aquatic_bird.n.01": "aquatic bird",
+    "aquatic_mammal.n.01": "aquatic mammal",
+    "aquatic_plant.n.01": "aquatic plant",
+    "aquatic_vertebrate.n.01": "aquatic vertebrate",
+    "arachnid.n.01": "arachnid",
+    "armchair.n.01": "扶手椅",
+    "arthropod.n.01": "节肢动物",
+    "article.n.02": "article",
+    "artifact.n.01": "人造物",
+    "ashcan.n.01": "垃圾桶",
+    "attribute.n.02": "attribute",
+    "backpack.n.01": "背包",
+    "badminton_racket.n.01": "羽毛球拍",
+    "bag.n.01": "bag",
+    "bag.n.04": "手提包",
+    "bagel.n.01": "贝果",
+    "baked_goods.n.01": "baked goods",
+    "bamboo.n.02": "竹子",
+    "bamboo_shoot.n.01": "竹笋",
+    "barn.n.01": "谷仓",
+    "barrier.n.01": "barrier",
+    "basidiomycete.n.01": "担子菌",
+    "basket.n.01": "篮子",
+    "beacon.n.03": "灯塔",
+    "bee.n.01": "蜜蜂",
+    "beehive.n.02": "蜂巢",
+    "beverage.n.01": "饮料",
+    "bin.n.01": "箱／桶",
+    "binary_compound.n.01": "binary compound",
+    "bird.n.01": "鸟类",
+    "bird.n.02": "bird",
+    "body_covering.n.01": "body covering",
+    "bony_fish.n.01": "bony fish",
+    "book.n.02": "书",
+    "bottle.n.01": "bottle",
+    "boulder.n.01": "巨石",
+    "bowl.n.01": "碗",
+    "box.n.01": "box",
+    "branch.n.02": "branch",
+    "bread.n.01": "bread",
+    "building.n.01": "building",
+    "bulbous_plant.n.01": "bulbous plant",
+    "bumblebee.n.01": "大黄蜂",
+    "bun.n.01": "bun",
+    "burn_plant.n.01": "芦荟",
+    "cabbage.n.01": "卷心菜",
+    "cabinet.n.01": "cabinet",
+    "cafe.n.01": "咖啡馆",
+    "cake.n.03": "cake",
+    "canine.n.02": "canine",
+    "car.n.01": "car",
+    "caribou.n.01": "驯鹿",
+    "carnivore.n.01": "carnivore",
+    "carp.n.02": "鲤鱼",
+    "carrot.n.01": "胡萝卜",
+    "carton.n.02": "纸盒",
+    "caterpillar.n.01": "毛毛虫",
+    "cavy.n.01": "cavy",
+    "celestial_body.n.01": "celestial body",
+    "cephalopod.n.01": "cephalopod",
+    "cereal.n.01": "cereal",
+    "cetacean.n.01": "cetacean",
+    "chair.n.01": "chair",
+    "cheese.n.01": "奶酪",
+    "cheese_pizza.n.01": "奶酪披萨",
+    "chelonian.n.01": "chelonian",
+    "chemical.n.01": "chemical",
+    "chest_of_drawers.n.01": "抽屉柜",
+    "chicken.n.01": "鸡肉",
+    "chordate.n.01": "脊索动物",
+    "clothing.n.01": "衣物",
+    "coat_hanger.n.01": "衣架",
+    "columbiform_bird.n.01": "columbiform bird",
+    "commodity.n.01": "商品",
+    "compound.n.02": "compound",
+    "conifer.n.01": "针叶树",
+    "consumer_goods.n.01": "消费品",
+    "container.n.01": "容器",
+    "conveyance.n.03": "交通工具",
+    "cooking_utensil.n.01": "cooking utensil",
+    "copy.n.02": "copy",
+    "coral.n.02": "珊瑚",
+    "coral_reef.n.01": "珊瑚礁",
+    "covering.n.01": "covering",
+    "covering.n.02": "覆盖物",
+    "coyote.n.01": "郊狼",
+    "craft.n.02": "craft",
+    "creation.n.02": "creation",
+    "creator.n.02": "creator",
+    "crocodile.n.01": "鳄鱼",
+    "crocodilian_reptile.n.01": "crocodilian reptile",
+    "cruciferous_vegetable.n.01": "cruciferous vegetable",
+    "cruiser.n.01": "警车",
+    "crystal.n.01": "水晶",
+    "cutter.n.06": "cutter",
+    "cutting_implement.n.01": "cutting implement",
+    "cuttlefish.n.01": "乌贼",
+    "cylinder.n.02": "cylinder",
+    "cyprinid.n.01": "cyprinid",
+    "cypriniform_fish.n.01": "cypriniform fish",
+    "dairy_product.n.01": "dairy product",
+    "damselfish.n.01": "damselfish",
+    "decapod.n.02": "decapod",
+    "decoration.n.01": "装饰物",
+    "deer.n.01": "鹿",
+    "desk.n.01": "书桌",
+    "device.n.01": "装置",
+    "diapsid.n.01": "diapsid",
+    "dipterous_insect.n.01": "dipterous insect",
+    "dish.n.02": "菜肴",
+    "domestic_fowl.n.01": "domestic fowl",
+    "door.n.01": "门",
+    "duck.n.01": "鸭",
+    "dumpling.n.01": "dumpling",
+    "durables.n.01": "耐用品",
+    "eared_seal.n.01": "eared seal",
+    "earring.n.01": "耳环",
+    "echinoderm.n.01": "echinoderm",
+    "edentate.n.01": "edentate",
+    "edge_tool.n.01": "edge tool",
+    "edible_fruit.n.01": "可食用水果",
+    "egg_roll.n.01": "春卷",
+    "employee.n.01": "employee",
+    "emu.n.02": "鸸鹋",
+    "entity.n.01": "实体",
+    "equipment.n.01": "设备",
+    "eraser.n.01": "橡皮",
+    "even-toed_ungulate.n.01": "even-toed ungulate",
+    "facility.n.01": "facility",
+    "farm_building.n.01": "farm building",
+    "farmer.n.01": "农民",
+    "farmhand.n.01": "农场工人",
+    "feather.n.01": "羽毛",
+    "fir.n.02": "冷杉",
+    "fish.n.01": "鱼类",
+    "fish.n.02": "鱼肉",
+    "fixture.n.01": "固定装置",
+    "flask.n.01": "flask",
+    "flatware.n.01": "flatware",
+    "fluid.n.01": "fluid",
+    "fly_agaric.n.01": "毒蝇伞",
+    "food.n.01": "营养物",
+    "food.n.02": "固体食物",
+    "foodstuff.n.02": "foodstuff",
+    "footwear.n.02": "footwear",
+    "forklift.n.01": "叉车",
+    "frog.n.01": "frog",
+    "fruit.n.01": "fruit",
+    "fruit_tree.n.01": "fruit tree",
+    "fungus.n.01": "真菌",
+    "furnishing.n.02": "furnishing",
+    "furniture.n.01": "家具",
+    "gallinaceous_bird.n.01": "gallinaceous bird",
+    "game.n.09": "game",
+    "game_equipment.n.01": "game equipment",
+    "garment.n.01": "衣服",
+    "gasoline_station.n.01": "加油站",
+    "gastropod.n.01": "gastropod",
+    "gem.n.02": "gem",
+    "geological_formation.n.01": "geological formation",
+    "giant_panda.n.01": "大熊猫",
+    "ginkgo.n.01": "银杏",
+    "goldfish.n.01": "金鱼",
+    "gramineous_plant.n.01": "gramineous plant",
+    "grape.n.02": "葡萄藤",
+    "grass.n.01": "grass",
+    "great_ape.n.01": "great ape",
+    "green_pepper.n.01": "青椒",
+    "guinea_pig.n.02": "豚鼠",
+    "gymnospermous_tree.n.01": "裸子植物树木",
+    "hand_tool.n.01": "hand tool",
+    "hanger.n.02": "hanger",
+    "heavier-than-air_craft.n.01": "heavier-than-air craft",
+    "helicopter.n.01": "直升机",
+    "herb.n.01": "草本植物",
+    "heron.n.02": "苍鹭",
+    "hired_hand.n.01": "hired hand",
+    "home_appliance.n.01": "家用电器",
+    "hymenopterous_insect.n.01": "hymenopterous insect",
+    "implement.n.01": "工具",
+    "insect.n.01": "昆虫",
+    "instrument.n.01": "仪器",
+    "instrumentality.n.03": "器具",
+    "invertebrate.n.01": "无脊椎动物",
+    "jar.n.01": "jar",
+    "jean.n.01": "牛仔裤",
+    "jewelry.n.01": "首饰",
+    "jigsaw_puzzle.n.01": "拼图",
+    "kitchen_appliance.n.01": "厨房电器",
+    "kitchen_utensil.n.01": "kitchen utensil",
+    "kite.n.03": "风筝",
+    "kiwi.n.03": "猕猴桃",
+    "knife.n.01": "knife",
+    "laborer.n.01": "laborer",
+    "lamp.n.02": "lamp",
+    "larva.n.01": "larva",
+    "life_buoy.n.01": "life buoy",
+    "life_preserver.n.01": "life preserver",
+    "liliaceous_plant.n.01": "liliaceous plant",
+    "limb.n.02": "树枝",
+    "liquid.n.01": "liquid",
+    "living_thing.n.01": "生物",
+    "lotus.n.01": "荷花",
+    "mammal.n.01": "哺乳动物",
+    "material.n.01": "material",
+    "matter.n.03": "物质",
+    "meal.n.01": "meal",
+    "measuring_instrument.n.01": "测量工具",
+    "measuring_stick.n.01": "量尺",
+    "meat.n.01": "肉类",
+    "millipede.n.01": "马陆",
+    "mollusk.n.01": "mollusk",
+    "moon.n.01": "月亮",
+    "morning_glory.n.01": "牵牛花",
+    "mosquito.n.01": "蚊子",
+    "motor_vehicle.n.01": "motor vehicle",
+    "motorcycle.n.01": "摩托车",
+    "movable_barrier.n.01": "movable barrier",
+    "mushroom.n.01": "蘑菇",
+    "natural_elevation.n.01": "natural elevation",
+    "natural_object.n.01": "自然物",
+    "nest.n.01": "nest",
+    "noodle.n.01": "面条",
+    "nutriment.n.01": "nutriment",
+    "object.n.01": "物体",
+    "obstruction.n.01": "obstruction",
+    "octopod.n.01": "octopod",
+    "octopus.n.02": "章鱼",
+    "opaque_gem.n.01": "opaque gem",
+    "optical_instrument.n.01": "optical instrument",
+    "orangutan.n.01": "猩猩",
+    "organism.n.01": "有机体",
+    "oven.n.01": "烤箱",
+    "pan.n.01": "平底锅",
+    "pancake.n.01": "pancake",
+    "pasta.n.01": "pasta",
+    "pasta.n.02": "pasta",
+    "pastry.n.02": "pastry",
+    "peach.n.01": "桃树",
+    "pebble.n.01": "鹅卵石",
+    "pelecaniform_seabird.n.01": "pelecaniform seabird",
+    "pelican.n.01": "鹈鹕",
+    "pencil.n.01": "铅笔",
+    "pepper.n.04": "pepper",
+    "percoid_fish.n.01": "percoid fish",
+    "person.n.01": "人",
+    "physical_entity.n.01": "物理实体",
+    "piciform_bird.n.01": "piciform bird",
+    "pie.n.01": "派",
+    "pigeon.n.01": "鸽子",
+    "pineapple.n.02": "菠萝",
+    "pinniped_mammal.n.01": "pinniped mammal",
+    "pizza.n.01": "pizza",
+    "placental.n.01": "胎盘哺乳动物",
+    "plant.n.02": "植物",
+    "plant_organ.n.01": "plant organ",
+    "plant_part.n.01": "植物部分",
+    "plate.n.04": "盘子",
+    "plaything.n.01": "plaything",
+    "plumbing_fixture.n.01": "卫浴设施",
+    "poultry.n.02": "poultry",
+    "primate.n.02": "primate",
+    "procyonid.n.01": "procyonid",
+    "produce.n.01": "农产品",
+    "product.n.02": "product",
+    "pumpkin.n.02": "南瓜",
+    "puzzle.n.02": "puzzle",
+    "racket.n.04": "racket",
+    "ratite.n.01": "ratite",
+    "reef.n.01": "reef",
+    "remote_control.n.01": "遥控器",
+    "replica.n.01": "replica",
+    "representation.n.02": "representation",
+    "reproductive_structure.n.01": "reproductive structure",
+    "reptile.n.01": "reptile",
+    "rescue_equipment.n.01": "rescue equipment",
+    "restaurant.n.01": "restaurant",
+    "rice.n.02": "水稻",
+    "ridge.n.01": "ridge",
+    "rock.n.01": "岩石",
+    "rodent.n.01": "rodent",
+    "root.n.01": "root",
+    "rose.n.01": "玫瑰",
+    "round_shape.n.01": "round shape",
+    "rule.n.12": "尺子",
+    "ruminant.n.01": "ruminant",
+    "sailboat.n.01": "帆船",
+    "sailing_vessel.n.01": "sailing vessel",
+    "salmon.n.01": "鲑鱼",
+    "salmonid.n.01": "salmonid",
+    "satellite.n.03": "satellite",
+    "sausage.n.01": "香肠",
+    "scombroid.n.01": "scombroid",
+    "scorpion.n.03": "蝎子",
+    "screwdriver.n.01": "螺丝刀",
+    "sea_lion.n.01": "海狮",
+    "seabird.n.01": "seabird",
+    "seal.n.09": "seal",
+    "seat.n.03": "seat",
+    "self-propelled_vehicle.n.01": "self-propelled vehicle",
+    "service_station.n.01": "service station",
+    "sewing_machine.n.01": "缝纫机",
+    "shape.n.02": "shape",
+    "shiitake.n.01": "香菇",
+    "shoe.n.01": "鞋子",
+    "shrub.n.01": "shrub",
+    "sink.n.01": "洗手池",
+    "slipper.n.01": "拖鞋",
+    "sloth.n.02": "树懒",
+    "snail.n.01": "蜗牛",
+    "soft-finned_fish.n.01": "soft-finned fish",
+    "solanaceous_vegetable.n.01": "solanaceous vegetable",
+    "solid.n.01": "固体",
+    "soup.n.01": "汤",
+    "spaghetti.n.01": "意大利面",
+    "spectacles.n.01": "眼镜",
+    "spiny-finned_fish.n.01": "spiny-finned fish",
+    "sports_implement.n.01": "sports implement",
+    "squirrel.n.01": "松鼠",
+    "stalactite.n.01": "钟乳石",
+    "stalk.n.02": "stalk",
+    "star.n.01": "star",
+    "starches.n.01": "starches",
+    "starfish.n.01": "海星",
+    "station.n.01": "station",
+    "structure.n.01": "结构／建筑物",
+    "substance.n.01": "substance",
+    "substance.n.07": "物质",
+    "succulent.n.01": "succulent",
+    "sun.n.01": "太阳",
+    "support.n.10": "support",
+    "sweet_pepper.n.02": "sweet pepper",
+    "swordfish.n.02": "剑鱼",
+    "table.n.02": "桌子",
+    "table_knife.n.01": "餐刀",
+    "tableware.n.01": "tableware",
+    "tea.n.01": "茶",
+    "teleost_fish.n.01": "teleost fish",
+    "thermos.n.01": "thermos",
+    "tool.n.01": "tool",
+    "tortilla.n.01": "玉米饼",
+    "tortoise.n.01": "陆龟",
+    "tourist.n.01": "游客",
+    "tower.n.01": "tower",
+    "toy.n.02": "toy",
+    "tractor.n.01": "拖拉机",
+    "traveler.n.01": "traveler",
+    "tree.n.01": "树",
+    "tree_toad.n.01": "树蛙",
+    "trouser.n.01": "裤子",
+    "truck.n.01": "truck",
+    "tulip.n.01": "郁金香",
+    "tuna.n.03": "金枪鱼",
+    "turkey.n.01": "火鸡",
+    "turtle.n.02": "乌龟",
+    "ungulate.n.01": "ungulate",
+    "utensil.n.01": "utensil",
+    "vacuum_flask.n.01": "vacuum flask",
+    "van.n.05": "面包车",
+    "vascular_plant.n.01": "维管植物",
+    "vegetable.n.01": "vegetable",
+    "vehicle.n.01": "车辆",
+    "vertebrate.n.01": "脊椎动物",
+    "vessel.n.02": "vessel",
+    "vessel.n.03": "容器／器皿",
+    "vine.n.01": "vine",
+    "wading_bird.n.01": "wading bird",
+    "ware.n.01": "ware",
+    "washer.n.03": "洗衣机",
+    "water.n.01": "水",
+    "water_lily.n.01": "water lily",
+    "waterfowl.n.01": "waterfowl",
+    "whale.n.02": "鲸",
+    "wheeled_vehicle.n.01": "轮式车辆",
+    "white_goods.n.01": "大型家电",
+    "whole.n.02": "完整体",
+    "wolf.n.01": "wolf",
+    "woodpecker.n.01": "啄木鸟",
+    "woody_plant.n.01": "木本植物",
+    "worker.n.01": "工作者",
+    "workman.n.01": "workman",
+    "writing_implement.n.01": "书写工具"
+  },
+  "entries": [
+    {
+      "term": "乌贼",
+      "synset": "cuttlefish.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "mollusk.n.01",
+        "cephalopod.n.01",
+        "decapod.n.02",
+        "cuttlefish.n.01"
+      ]
+    },
+    {
+      "term": "乌龟",
+      "synset": "turtle.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "reptile.n.01",
+        "anapsid.n.01",
+        "chelonian.n.01",
+        "turtle.n.02"
+      ]
+    },
+    {
+      "term": "书",
+      "synset": "book.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "creation.n.02",
+        "product.n.02",
+        "book.n.02"
+      ]
+    },
+    {
+      "term": "书桌",
+      "synset": "desk.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "table.n.02",
+        "desk.n.01"
+      ]
+    },
+    {
+      "term": "便当",
+      "synset": "meal.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "meal.n.01"
+      ]
+    },
+    {
+      "term": "保温杯",
+      "synset": "thermos.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "vessel.n.03",
+        "bottle.n.01",
+        "flask.n.01",
+        "vacuum_flask.n.01",
+        "thermos.n.01"
+      ]
+    },
+    {
+      "term": "农场工人",
+      "synset": "farmhand.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "person.n.01",
+        "worker.n.01",
+        "employee.n.01",
+        "workman.n.01",
+        "laborer.n.01",
+        "hired_hand.n.01",
+        "farmhand.n.01"
+      ]
+    },
+    {
+      "term": "农民",
+      "synset": "farmer.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "person.n.01",
+        "creator.n.02",
+        "farmer.n.01"
+      ]
+    },
+    {
+      "term": "冷杉",
+      "synset": "fir.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "woody_plant.n.01",
+        "tree.n.01",
+        "gymnospermous_tree.n.01",
+        "conifer.n.01",
+        "fir.n.02"
+      ]
+    },
+    {
+      "term": "剑鱼",
+      "synset": "swordfish.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "spiny-finned_fish.n.01",
+        "percoid_fish.n.01",
+        "scombroid.n.01",
+        "swordfish.n.02"
+      ]
+    },
+    {
+      "term": "加油站",
+      "synset": "gasoline_station.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "facility.n.01",
+        "station.n.01",
+        "service_station.n.01",
+        "gasoline_station.n.01"
+      ]
+    },
+    {
+      "term": "南瓜",
+      "synset": "pumpkin.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "produce.n.01",
+        "vegetable.n.01",
+        "pumpkin.n.02"
+      ]
+    },
+    {
+      "term": "卷心菜",
+      "synset": "cabbage.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "produce.n.01",
+        "vegetable.n.01",
+        "cruciferous_vegetable.n.01",
+        "cabbage.n.01"
+      ]
+    },
+    {
+      "term": "叉车",
+      "synset": "forklift.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "wheeled_vehicle.n.01",
+        "self-propelled_vehicle.n.01",
+        "forklift.n.01"
+      ]
+    },
+    {
+      "term": "台灯",
+      "synset": "lamp.n.02",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "lamp.n.02"
+      ]
+    },
+    {
+      "term": "咖啡师",
+      "synset": "worker.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "person.n.01",
+        "worker.n.01"
+      ]
+    },
+    {
+      "term": "咖啡馆",
+      "synset": "cafe.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "structure.n.01",
+        "building.n.01",
+        "restaurant.n.01",
+        "cafe.n.01"
+      ]
+    },
+    {
+      "term": "啄木鸟",
+      "synset": "woodpecker.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "piciform_bird.n.01",
+        "woodpecker.n.01"
+      ]
+    },
+    {
+      "term": "垃圾桶",
+      "synset": "ashcan.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "bin.n.01",
+        "ashcan.n.01"
+      ]
+    },
+    {
+      "term": "大熊猫",
+      "synset": "giant_panda.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "carnivore.n.01",
+        "procyonid.n.01",
+        "giant_panda.n.01"
+      ]
+    },
+    {
+      "term": "大黄蜂",
+      "synset": "bumblebee.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "insect.n.01",
+        "hymenopterous_insect.n.01",
+        "bee.n.01",
+        "bumblebee.n.01"
+      ]
+    },
+    {
+      "term": "太阳",
+      "synset": "sun.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "celestial_body.n.01",
+        "star.n.01",
+        "sun.n.01"
+      ]
+    },
+    {
+      "term": "奶茶",
+      "synset": "tea.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.01",
+        "fluid.n.01",
+        "liquid.n.01",
+        "beverage.n.01",
+        "tea.n.01"
+      ]
+    },
+    {
+      "term": "奶酪",
+      "synset": "cheese.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "foodstuff.n.02",
+        "dairy_product.n.01",
+        "cheese.n.01"
+      ]
+    },
+    {
+      "term": "奶酪披萨",
+      "synset": "cheese_pizza.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "dish.n.02",
+        "pizza.n.01",
+        "cheese_pizza.n.01"
+      ]
+    },
+    {
+      "term": "小丑鱼",
+      "synset": "anemone_fish.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "spiny-finned_fish.n.01",
+        "percoid_fish.n.01",
+        "damselfish.n.01",
+        "anemone_fish.n.01"
+      ]
+    },
+    {
+      "term": "尺子",
+      "synset": "rule.n.12",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "device.n.01",
+        "instrument.n.01",
+        "measuring_instrument.n.01",
+        "measuring_stick.n.01",
+        "rule.n.12"
+      ]
+    },
+    {
+      "term": "岩石",
+      "synset": "rock.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "rock.n.01"
+      ]
+    },
+    {
+      "term": "巨石",
+      "synset": "boulder.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "rock.n.01",
+        "boulder.n.01"
+      ]
+    },
+    {
+      "term": "帆船",
+      "synset": "sailboat.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "craft.n.02",
+        "vessel.n.02",
+        "sailing_vessel.n.01",
+        "sailboat.n.01"
+      ]
+    },
+    {
+      "term": "平底锅",
+      "synset": "pan.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "utensil.n.01",
+        "kitchen_utensil.n.01",
+        "cooking_utensil.n.01",
+        "pan.n.01"
+      ]
+    },
+    {
+      "term": "意大利面",
+      "synset": "spaghetti.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "dish.n.02",
+        "pasta.n.01",
+        "spaghetti.n.01"
+      ]
+    },
+    {
+      "term": "手提包",
+      "synset": "bag.n.04",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "bag.n.04"
+      ]
+    },
+    {
+      "term": "扶手椅",
+      "synset": "armchair.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "seat.n.03",
+        "chair.n.01",
+        "armchair.n.01"
+      ]
+    },
+    {
+      "term": "抽屉柜",
+      "synset": "chest_of_drawers.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "chest_of_drawers.n.01"
+      ]
+    },
+    {
+      "term": "拖拉机",
+      "synset": "tractor.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "wheeled_vehicle.n.01",
+        "self-propelled_vehicle.n.01",
+        "tractor.n.01"
+      ]
+    },
+    {
+      "term": "拖鞋",
+      "synset": "slipper.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "covering.n.02",
+        "footwear.n.02",
+        "slipper.n.01"
+      ]
+    },
+    {
+      "term": "拼图",
+      "synset": "jigsaw_puzzle.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "equipment.n.01",
+        "game_equipment.n.01",
+        "game.n.09",
+        "puzzle.n.02",
+        "jigsaw_puzzle.n.01"
+      ]
+    },
+    {
+      "term": "摩托车",
+      "synset": "motorcycle.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "wheeled_vehicle.n.01",
+        "self-propelled_vehicle.n.01",
+        "motor_vehicle.n.01",
+        "motorcycle.n.01"
+      ]
+    },
+    {
+      "term": "春卷",
+      "synset": "egg_roll.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "dish.n.02",
+        "egg_roll.n.01"
+      ]
+    },
+    {
+      "term": "月亮",
+      "synset": "moon.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "celestial_body.n.01",
+        "satellite.n.03",
+        "moon.n.01"
+      ]
+    },
+    {
+      "term": "松鼠",
+      "synset": "squirrel.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "rodent.n.01",
+        "squirrel.n.01"
+      ]
+    },
+    {
+      "term": "果盘",
+      "synset": "dish.n.02",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "dish.n.02"
+      ]
+    },
+    {
+      "term": "树懒",
+      "synset": "sloth.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "edentate.n.01",
+        "sloth.n.02"
+      ]
+    },
+    {
+      "term": "树枝",
+      "synset": "limb.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "plant_part.n.01",
+        "plant_organ.n.01",
+        "stalk.n.02",
+        "branch.n.02",
+        "limb.n.02"
+      ]
+    },
+    {
+      "term": "树蛙",
+      "synset": "tree_toad.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "amphibian.n.03",
+        "frog.n.01",
+        "tree_toad.n.01"
+      ]
+    },
+    {
+      "term": "桃树",
+      "synset": "peach.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "woody_plant.n.01",
+        "tree.n.01",
+        "angiospermous_tree.n.01",
+        "fruit_tree.n.01",
+        "peach.n.01"
+      ]
+    },
+    {
+      "term": "桌子",
+      "synset": "table.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "table.n.02"
+      ]
+    },
+    {
+      "term": "橡皮",
+      "synset": "eraser.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "eraser.n.01"
+      ]
+    },
+    {
+      "term": "毒蝇伞",
+      "synset": "fly_agaric.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "fungus.n.01",
+        "basidiomycete.n.01",
+        "agaric.n.02",
+        "fly_agaric.n.01"
+      ]
+    },
+    {
+      "term": "毛毛虫",
+      "synset": "caterpillar.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "larva.n.01",
+        "caterpillar.n.01"
+      ]
+    },
+    {
+      "term": "水",
+      "synset": "water.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.01",
+        "material.n.01",
+        "chemical.n.01",
+        "compound.n.02",
+        "binary_compound.n.01",
+        "water.n.01"
+      ]
+    },
+    {
+      "term": "水晶",
+      "synset": "crystal.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "crystal.n.01"
+      ]
+    },
+    {
+      "term": "水稻",
+      "synset": "rice.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "herb.n.01",
+        "gramineous_plant.n.01",
+        "grass.n.01",
+        "cereal.n.01",
+        "rice.n.02"
+      ]
+    },
+    {
+      "term": "汤",
+      "synset": "soup.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "nutriment.n.01",
+        "dish.n.02",
+        "soup.n.01"
+      ]
+    },
+    {
+      "term": "汤圆",
+      "synset": "dumpling.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "pasta.n.02",
+        "dumpling.n.01"
+      ]
+    },
+    {
+      "term": "洗手池",
+      "synset": "sink.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "fixture.n.01",
+        "plumbing_fixture.n.01",
+        "sink.n.01"
+      ]
+    },
+    {
+      "term": "洗衣机",
+      "synset": "washer.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "commodity.n.01",
+        "consumer_goods.n.01",
+        "durables.n.01",
+        "appliance.n.02",
+        "home_appliance.n.01",
+        "white_goods.n.01",
+        "washer.n.03"
+      ]
+    },
+    {
+      "term": "派",
+      "synset": "pie.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "baked_goods.n.01",
+        "pastry.n.02",
+        "pie.n.01"
+      ]
+    },
+    {
+      "term": "海星",
+      "synset": "starfish.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "echinoderm.n.01",
+        "starfish.n.01"
+      ]
+    },
+    {
+      "term": "海狮",
+      "synset": "sea_lion.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "aquatic_mammal.n.01",
+        "pinniped_mammal.n.01",
+        "seal.n.09",
+        "eared_seal.n.01",
+        "sea_lion.n.01"
+      ]
+    },
+    {
+      "term": "游客",
+      "synset": "tourist.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "person.n.01",
+        "traveler.n.01",
+        "tourist.n.01"
+      ]
+    },
+    {
+      "term": "游泳圈",
+      "synset": "life_buoy.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "equipment.n.01",
+        "rescue_equipment.n.01",
+        "life_preserver.n.01",
+        "life_buoy.n.01"
+      ]
+    },
+    {
+      "term": "火鸡",
+      "synset": "turkey.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "gallinaceous_bird.n.01",
+        "domestic_fowl.n.01",
+        "turkey.n.01"
+      ]
+    },
+    {
+      "term": "灯塔",
+      "synset": "beacon.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "structure.n.01",
+        "tower.n.01",
+        "beacon.n.03"
+      ]
+    },
+    {
+      "term": "炸鸡",
+      "synset": "chicken.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "meat.n.01",
+        "bird.n.02",
+        "poultry.n.02",
+        "chicken.n.01"
+      ]
+    },
+    {
+      "term": "烤箱",
+      "synset": "oven.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "commodity.n.01",
+        "consumer_goods.n.01",
+        "durables.n.01",
+        "appliance.n.02",
+        "home_appliance.n.01",
+        "kitchen_appliance.n.01",
+        "oven.n.01"
+      ]
+    },
+    {
+      "term": "烤鱼",
+      "synset": "fish.n.02",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "fish.n.02"
+      ]
+    },
+    {
+      "term": "牛仔裤",
+      "synset": "jean.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "commodity.n.01",
+        "consumer_goods.n.01",
+        "clothing.n.01",
+        "garment.n.01",
+        "trouser.n.01",
+        "jean.n.01"
+      ]
+    },
+    {
+      "term": "牵牛花",
+      "synset": "morning_glory.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "vine.n.01",
+        "morning_glory.n.01"
+      ]
+    },
+    {
+      "term": "猕猴桃",
+      "synset": "kiwi.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "plant_part.n.01",
+        "plant_organ.n.01",
+        "reproductive_structure.n.01",
+        "fruit.n.01",
+        "edible_fruit.n.01",
+        "kiwi.n.03"
+      ]
+    },
+    {
+      "term": "猩猩",
+      "synset": "orangutan.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "primate.n.02",
+        "ape.n.01",
+        "anthropoid_ape.n.01",
+        "great_ape.n.01",
+        "orangutan.n.01"
+      ]
+    },
+    {
+      "term": "玉米饼",
+      "synset": "tortilla.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "baked_goods.n.01",
+        "cake.n.03",
+        "pancake.n.01",
+        "tortilla.n.01"
+      ]
+    },
+    {
+      "term": "玩具汽车",
+      "synset": "toy.n.02",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "creation.n.02",
+        "representation.n.02",
+        "copy.n.02",
+        "replica.n.01",
+        "toy.n.02"
+      ]
+    },
+    {
+      "term": "玫瑰",
+      "synset": "rose.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "woody_plant.n.01",
+        "shrub.n.01",
+        "rose.n.01"
+      ]
+    },
+    {
+      "term": "玻璃罐",
+      "synset": "jar.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "vessel.n.03",
+        "jar.n.01"
+      ]
+    },
+    {
+      "term": "珊瑚",
+      "synset": "coral.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "crystal.n.01",
+        "gem.n.02",
+        "opaque_gem.n.01",
+        "coral.n.02"
+      ]
+    },
+    {
+      "term": "珊瑚礁",
+      "synset": "coral_reef.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "geological_formation.n.01",
+        "natural_elevation.n.01",
+        "ridge.n.01",
+        "reef.n.01",
+        "coral_reef.n.01"
+      ]
+    },
+    {
+      "term": "盘子",
+      "synset": "plate.n.04",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "article.n.02",
+        "ware.n.01",
+        "tableware.n.01",
+        "flatware.n.01",
+        "plate.n.04"
+      ]
+    },
+    {
+      "term": "直升机",
+      "synset": "helicopter.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "craft.n.02",
+        "aircraft.n.01",
+        "heavier-than-air_craft.n.01",
+        "helicopter.n.01"
+      ]
+    },
+    {
+      "term": "眼镜",
+      "synset": "spectacles.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "device.n.01",
+        "instrument.n.01",
+        "optical_instrument.n.01",
+        "spectacles.n.01"
+      ]
+    },
+    {
+      "term": "石头",
+      "synset": "rock.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "rock.n.01"
+      ]
+    },
+    {
+      "term": "碗",
+      "synset": "bowl.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "vessel.n.03",
+        "bowl.n.01"
+      ]
+    },
+    {
+      "term": "章鱼",
+      "synset": "octopus.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "mollusk.n.01",
+        "cephalopod.n.01",
+        "octopod.n.01",
+        "octopus.n.02"
+      ]
+    },
+    {
+      "term": "竹子",
+      "synset": "bamboo.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "herb.n.01",
+        "gramineous_plant.n.01",
+        "bamboo.n.02"
+      ]
+    },
+    {
+      "term": "竹笋",
+      "synset": "bamboo_shoot.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "produce.n.01",
+        "vegetable.n.01",
+        "bamboo_shoot.n.01"
+      ]
+    },
+    {
+      "term": "篮子",
+      "synset": "basket.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "basket.n.01"
+      ]
+    },
+    {
+      "term": "纸盒",
+      "synset": "carton.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "box.n.01",
+        "carton.n.02"
+      ]
+    },
+    {
+      "term": "缝纫机",
+      "synset": "sewing_machine.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "commodity.n.01",
+        "consumer_goods.n.01",
+        "durables.n.01",
+        "appliance.n.02",
+        "home_appliance.n.01",
+        "sewing_machine.n.01"
+      ]
+    },
+    {
+      "term": "羽毛",
+      "synset": "feather.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "covering.n.01",
+        "body_covering.n.01",
+        "feather.n.01"
+      ]
+    },
+    {
+      "term": "羽毛球拍",
+      "synset": "badminton_racket.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "sports_implement.n.01",
+        "racket.n.04",
+        "badminton_racket.n.01"
+      ]
+    },
+    {
+      "term": "耳环",
+      "synset": "earring.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "decoration.n.01",
+        "adornment.n.01",
+        "jewelry.n.01",
+        "earring.n.01"
+      ]
+    },
+    {
+      "term": "背包",
+      "synset": "backpack.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "container.n.01",
+        "bag.n.01",
+        "backpack.n.01"
+      ]
+    },
+    {
+      "term": "胡萝卜",
+      "synset": "carrot.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "plant_part.n.01",
+        "plant_organ.n.01",
+        "root.n.01",
+        "carrot.n.01"
+      ]
+    },
+    {
+      "term": "舞茸",
+      "synset": "mushroom.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "fungus.n.01",
+        "basidiomycete.n.01",
+        "agaric.n.02",
+        "mushroom.n.01"
+      ]
+    },
+    {
+      "term": "芦荟",
+      "synset": "burn_plant.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "succulent.n.01",
+        "aloe.n.01",
+        "burn_plant.n.01"
+      ]
+    },
+    {
+      "term": "苍鹭",
+      "synset": "heron.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "aquatic_bird.n.01",
+        "wading_bird.n.01",
+        "heron.n.02"
+      ]
+    },
+    {
+      "term": "荷花",
+      "synset": "lotus.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "aquatic_plant.n.01",
+        "water_lily.n.01",
+        "lotus.n.01"
+      ]
+    },
+    {
+      "term": "菠萝",
+      "synset": "pineapple.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "plant_part.n.01",
+        "plant_organ.n.01",
+        "reproductive_structure.n.01",
+        "fruit.n.01",
+        "edible_fruit.n.01",
+        "pineapple.n.02"
+      ]
+    },
+    {
+      "term": "葡萄藤",
+      "synset": "grape.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "vine.n.01",
+        "grape.n.02"
+      ]
+    },
+    {
+      "term": "蚂蚁",
+      "synset": "ant.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "insect.n.01",
+        "hymenopterous_insect.n.01",
+        "ant.n.01"
+      ]
+    },
+    {
+      "term": "蚊子",
+      "synset": "mosquito.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "insect.n.01",
+        "dipterous_insect.n.01",
+        "mosquito.n.01"
+      ]
+    },
+    {
+      "term": "蜂巢",
+      "synset": "beehive.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "nest.n.01",
+        "beehive.n.02"
+      ]
+    },
+    {
+      "term": "蜗牛",
+      "synset": "snail.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "mollusk.n.01",
+        "gastropod.n.01",
+        "snail.n.01"
+      ]
+    },
+    {
+      "term": "蜜蜂",
+      "synset": "bee.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "insect.n.01",
+        "hymenopterous_insect.n.01",
+        "bee.n.01"
+      ]
+    },
+    {
+      "term": "蝎子",
+      "synset": "scorpion.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "arachnid.n.01",
+        "scorpion.n.03"
+      ]
+    },
+    {
+      "term": "螺丝刀",
+      "synset": "screwdriver.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "tool.n.01",
+        "hand_tool.n.01",
+        "screwdriver.n.01"
+      ]
+    },
+    {
+      "term": "衣架",
+      "synset": "coat_hanger.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "device.n.01",
+        "support.n.10",
+        "hanger.n.02",
+        "coat_hanger.n.01"
+      ]
+    },
+    {
+      "term": "警车",
+      "synset": "cruiser.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "wheeled_vehicle.n.01",
+        "self-propelled_vehicle.n.01",
+        "motor_vehicle.n.01",
+        "car.n.01",
+        "cruiser.n.01"
+      ]
+    },
+    {
+      "term": "谷仓",
+      "synset": "barn.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "structure.n.01",
+        "building.n.01",
+        "farm_building.n.01",
+        "barn.n.01"
+      ]
+    },
+    {
+      "term": "豚鼠",
+      "synset": "guinea_pig.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "rodent.n.01",
+        "cavy.n.01",
+        "guinea_pig.n.02"
+      ]
+    },
+    {
+      "term": "贝果",
+      "synset": "bagel.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "substance.n.07",
+        "food.n.01",
+        "foodstuff.n.02",
+        "starches.n.01",
+        "bread.n.01",
+        "bun.n.01",
+        "bagel.n.01"
+      ]
+    },
+    {
+      "term": "遥控器",
+      "synset": "remote_control.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "device.n.01",
+        "remote_control.n.01"
+      ]
+    },
+    {
+      "term": "郁金香",
+      "synset": "tulip.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "bulbous_plant.n.01",
+        "liliaceous_plant.n.01",
+        "tulip.n.01"
+      ]
+    },
+    {
+      "term": "郊狼",
+      "synset": "coyote.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "carnivore.n.01",
+        "canine.n.02",
+        "wolf.n.01",
+        "coyote.n.01"
+      ]
+    },
+    {
+      "term": "金枪鱼",
+      "synset": "tuna.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "spiny-finned_fish.n.01",
+        "percoid_fish.n.01",
+        "scombroid.n.01",
+        "tuna.n.03"
+      ]
+    },
+    {
+      "term": "金鱼",
+      "synset": "goldfish.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "soft-finned_fish.n.01",
+        "cypriniform_fish.n.01",
+        "cyprinid.n.01",
+        "goldfish.n.01"
+      ]
+    },
+    {
+      "term": "钟乳石",
+      "synset": "stalactite.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "abstraction.n.06",
+        "attribute.n.02",
+        "shape.n.02",
+        "round_shape.n.01",
+        "cylinder.n.02",
+        "stalactite.n.01"
+      ]
+    },
+    {
+      "term": "铅笔",
+      "synset": "pencil.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "writing_implement.n.01",
+        "pencil.n.01"
+      ]
+    },
+    {
+      "term": "银杏",
+      "synset": "ginkgo.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "plant.n.02",
+        "vascular_plant.n.01",
+        "woody_plant.n.01",
+        "tree.n.01",
+        "gymnospermous_tree.n.01",
+        "ginkgo.n.01"
+      ]
+    },
+    {
+      "term": "门",
+      "synset": "door.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "structure.n.01",
+        "obstruction.n.01",
+        "barrier.n.01",
+        "movable_barrier.n.01",
+        "door.n.01"
+      ]
+    },
+    {
+      "term": "陆龟",
+      "synset": "tortoise.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "reptile.n.01",
+        "anapsid.n.01",
+        "chelonian.n.01",
+        "turtle.n.02",
+        "tortoise.n.01"
+      ]
+    },
+    {
+      "term": "青椒",
+      "synset": "green_pepper.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "produce.n.01",
+        "vegetable.n.01",
+        "solanaceous_vegetable.n.01",
+        "pepper.n.04",
+        "sweet_pepper.n.02",
+        "green_pepper.n.01"
+      ]
+    },
+    {
+      "term": "面包车",
+      "synset": "van.n.05",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "conveyance.n.03",
+        "vehicle.n.01",
+        "wheeled_vehicle.n.01",
+        "self-propelled_vehicle.n.01",
+        "motor_vehicle.n.01",
+        "truck.n.01",
+        "van.n.05"
+      ]
+    },
+    {
+      "term": "面条",
+      "synset": "noodle.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "pasta.n.02",
+        "noodle.n.01"
+      ]
+    },
+    {
+      "term": "鞋子",
+      "synset": "shoe.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "covering.n.02",
+        "footwear.n.02",
+        "shoe.n.01"
+      ]
+    },
+    {
+      "term": "鞋柜",
+      "synset": "cabinet.n.01",
+      "extension": true,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "furnishing.n.02",
+        "furniture.n.01",
+        "cabinet.n.01"
+      ]
+    },
+    {
+      "term": "风筝",
+      "synset": "kite.n.03",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "plaything.n.01",
+        "kite.n.03"
+      ]
+    },
+    {
+      "term": "餐刀",
+      "synset": "table_knife.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "artifact.n.01",
+        "instrumentality.n.03",
+        "implement.n.01",
+        "tool.n.01",
+        "cutting_implement.n.01",
+        "cutter.n.06",
+        "edge_tool.n.01",
+        "knife.n.01",
+        "table_knife.n.01"
+      ]
+    },
+    {
+      "term": "香肠",
+      "synset": "sausage.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "meat.n.01",
+        "sausage.n.01"
+      ]
+    },
+    {
+      "term": "香菇",
+      "synset": "shiitake.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "fungus.n.01",
+        "shiitake.n.01"
+      ]
+    },
+    {
+      "term": "马陆",
+      "synset": "millipede.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "invertebrate.n.01",
+        "arthropod.n.01",
+        "millipede.n.01"
+      ]
+    },
+    {
+      "term": "驯鹿",
+      "synset": "caribou.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "ungulate.n.01",
+        "even-toed_ungulate.n.01",
+        "ruminant.n.01",
+        "deer.n.01",
+        "caribou.n.01"
+      ]
+    },
+    {
+      "term": "鲑鱼",
+      "synset": "salmon.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "soft-finned_fish.n.01",
+        "salmonid.n.01",
+        "salmon.n.01"
+      ]
+    },
+    {
+      "term": "鲤鱼",
+      "synset": "carp.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "aquatic_vertebrate.n.01",
+        "fish.n.01",
+        "bony_fish.n.01",
+        "teleost_fish.n.01",
+        "soft-finned_fish.n.01",
+        "cypriniform_fish.n.01",
+        "cyprinid.n.01",
+        "carp.n.02"
+      ]
+    },
+    {
+      "term": "鲸",
+      "synset": "whale.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "aquatic_mammal.n.01",
+        "cetacean.n.01",
+        "whale.n.02"
+      ]
+    },
+    {
+      "term": "鳄鱼",
+      "synset": "crocodile.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "reptile.n.01",
+        "diapsid.n.01",
+        "crocodilian_reptile.n.01",
+        "crocodile.n.01"
+      ]
+    },
+    {
+      "term": "鸡肉",
+      "synset": "chicken.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "matter.n.03",
+        "solid.n.01",
+        "food.n.02",
+        "meat.n.01",
+        "bird.n.02",
+        "poultry.n.02",
+        "chicken.n.01"
+      ]
+    },
+    {
+      "term": "鸭",
+      "synset": "duck.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "aquatic_bird.n.01",
+        "waterfowl.n.01",
+        "anseriform_bird.n.01",
+        "duck.n.01"
+      ]
+    },
+    {
+      "term": "鸸鹋",
+      "synset": "emu.n.02",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "ratite.n.01",
+        "emu.n.02"
+      ]
+    },
+    {
+      "term": "鸽子",
+      "synset": "pigeon.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "gallinaceous_bird.n.01",
+        "columbiform_bird.n.01",
+        "pigeon.n.01"
+      ]
+    },
+    {
+      "term": "鹅卵石",
+      "synset": "pebble.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "natural_object.n.01",
+        "rock.n.01",
+        "pebble.n.01"
+      ]
+    },
+    {
+      "term": "鹈鹕",
+      "synset": "pelican.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "bird.n.01",
+        "aquatic_bird.n.01",
+        "seabird.n.01",
+        "pelecaniform_seabird.n.01",
+        "pelican.n.01"
+      ]
+    },
+    {
+      "term": "鹿",
+      "synset": "deer.n.01",
+      "extension": false,
+      "path": [
+        "entity.n.01",
+        "physical_entity.n.01",
+        "object.n.01",
+        "whole.n.02",
+        "living_thing.n.01",
+        "organism.n.01",
+        "animal.n.01",
+        "chordate.n.01",
+        "vertebrate.n.01",
+        "mammal.n.01",
+        "placental.n.01",
+        "ungulate.n.01",
+        "even-toed_ungulate.n.01",
+        "ruminant.n.01",
+        "deer.n.01"
+      ]
+    }
+  ]
+}

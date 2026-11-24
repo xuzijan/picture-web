@@ -3,6 +3,7 @@
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Show, SignInButton, UserButton } from '@clerk/nextjs';
 import JSZip from 'jszip';
+import SubjectTree from './components/SubjectTree';
 
 type SubjectTags = { mainSubject: string; secondarySubjects: string[] };
 
@@ -70,6 +71,7 @@ export default function Home() {
   const selectionDrag = useRef<{ pointerId: number; startX: number; startY: number; moved: boolean; baseSelection: string[]; sweptIds: string[] } | null>(null);
   const ignoreSelectionClick = useRef(false);
   const [categoryBusy, setCategoryBusy] = useState(false);
+  const [treeSelection, setTreeSelection] = useState<{ id: string | null; label: string; terms: string[] | null }>({ id: null, label: '', terms: null });
   const [secondaryCount, setSecondaryCount] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [ready, setReady] = useState(false);
@@ -128,11 +130,12 @@ export default function Home() {
   const visibleImages = useMemo(
     () => images
       .filter((image) => activeFilter === 'all' || image.featured)
+      .filter((image) => !treeSelection.terms || (image.subjectTags && [image.subjectTags.mainSubject, ...image.subjectTags.secondarySubjects].some((term) => treeSelection.terms!.includes(term))))
       .filter((image) => secondaryCount === 'all' || image.subjectTags?.secondarySubjects.length === Number(secondaryCount))
       .filter((image) => selectingImages || !activeCategoryId || image.categoryIds?.includes(activeCategoryId))
       .filter((image) => image.name.toLocaleLowerCase().includes(searchTerm.trim().toLocaleLowerCase()))
       .sort((a, b) => b.createdAt - a.createdAt),
-    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount],
+    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount, treeSelection],
   );
 
   const toggleImageSelection = (id: string) => {
@@ -468,15 +471,18 @@ export default function Home() {
       {secondaryCount !== 'all' && <div className="filter-status" role="status">{`匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败，请刷新页面重试</>}</div>}
       {selectionMode && <div className="category-tools selection-tools"><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!selectedImageIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button><button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button></>}<button className="button danger" disabled={!selectedImageIds.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
+      {treeSelection.id && <div className="filter-status">物体分类：{treeSelection.label} · 匹配 {visibleImages.length} 张 <button className="text-button" onClick={() => setTreeSelection({ id: null, label: '', terms: null })}>清除</button></div>}
+      <div className="gallery-with-tree"><SubjectTree images={images} selectedId={treeSelection.id} onSelect={(id, label, terms) => { setTreeSelection({ id, label, terms }); setSelectedImageIds([]); }} />
       <section className={`masonry ${selectionMode ? 'selection-active' : ''}`} aria-label="图片瀑布流" ref={galleryRef} onPointerDown={onGalleryPointerDown} onPointerMove={onGalleryPointerMove} onPointerUp={onGalleryPointerUp} onPointerCancel={onGalleryPointerUp}>
         {visibleImages.map((image, index) => { const isSelected = selectedImageIds.includes(image.id); return <article className={`image-card card-${index % 5} ${isSelected ? 'image-selected' : ''}`} data-image-id={image.id} key={image.id}>
           <button className="image-button" onClick={() => { if (ignoreSelectionClick.current) { ignoreSelectionClick.current = false; return; } selectionMode ? toggleImageSelection(image.id) : void openImage(image); }} aria-label={selectionMode ? `${isSelected ? '取消选择' : '选择'} ${image.name}` : `放大查看 ${image.name}`}><img src={image.src} alt={image.name} />{selectionMode && <span className="selection-check">{isSelected ? '✓' : ''}</span>}</button>
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
         </article>})}
         {selectionRect && <div className="selection-rectangle" style={{ left: selectionRect.left, top: selectionRect.top, width: selectionRect.width, height: selectionRect.height }} />}
-        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : secondaryCount !== 'all' ? (filterError ? '部分标签未能加载，请刷新页面重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
+        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : (secondaryCount !== 'all' || treeSelection.id) ? (filterError ? '部分标签未能加载，请刷新页面重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
+      </div>
       <footer><span><span className="footer-dot" />{authenticated && !connected ? '云端连接异常' : connected ? '已连接云端' : '本地演示模式'}</span><span>{notice || (connected ? '图片保存到云端' : authenticated ? '云端数据未加载，本地操作已暂停' : '图片只保存在当前浏览器')}</span></footer>
 
       {isUploadOpen && <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setUploadOpen(false)}><div className="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title"><div className="modal-head"><div><p className="eyebrow">ADD ASSETS</p><h2 id="upload-title">上传图片</h2></div><button className="close" onClick={() => setUploadOpen(false)}>×</button></div><div className={dragging ? 'dropzone dragging' : 'dropzone'} onDragOver={(event) => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop} onClick={() => inputRef.current?.click()}><input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={handleInput} /><span className="upload-icon">↑</span><strong>拖拽图片到这里</strong><span>或点击选择，可一次上传多张</span><small>PNG、JPG、WEBP · 建议单张不超过 10MB</small></div>{pendingFiles.length > 0 && <div className="pending"><div className="pending-title"><span>待上传 {pendingFiles.length} 张</span><button onClick={() => setPendingFiles([])}>清空</button></div><div className="pending-list">{pendingFiles.map((file, index) => <div className="pending-item" key={`${file.name}-${index}`}><span>{file.name}</span><button onClick={() => setPendingFiles((current) => current.filter((_, i) => i !== index))}>×</button></div>)}</div></div>}<div className="modal-actions"><button className="button ghost" onClick={() => setUploadOpen(false)}>取消</button><button className="button primary" disabled={!pendingFiles.length || busy} onClick={publishFiles}>{busy ? '上传中…' : '发布到画廊'} <Icon>→</Icon></button></div></div></div>}
