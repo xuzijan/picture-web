@@ -61,7 +61,7 @@ export default function Home() {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [categoryName, setCategoryName] = useState('');
-  const [selectingImages, setSelectingImages] = useState(false);
+  const [addingToCategory, setAddingToCategory] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
   const [downloadBusy, setDownloadBusy] = useState(false);
@@ -132,11 +132,21 @@ export default function Home() {
       .filter((image) => activeFilter === 'all' || image.featured)
       .filter((image) => !treeSelection.terms || (image.subjectTags && [image.subjectTags.mainSubject, ...image.subjectTags.secondarySubjects].some((term) => treeSelection.terms!.includes(term))))
       .filter((image) => secondaryCount === 'all' || image.subjectTags?.secondarySubjects.length === Number(secondaryCount))
-      .filter((image) => selectingImages || !activeCategoryId || image.categoryIds?.includes(activeCategoryId))
+      .filter((image) => addingToCategory || !activeCategoryId || image.categoryIds?.includes(activeCategoryId))
       .filter((image) => image.name.toLocaleLowerCase().includes(searchTerm.trim().toLocaleLowerCase()))
       .sort((a, b) => b.createdAt - a.createdAt),
-    [images, activeFilter, activeCategoryId, selectingImages, searchTerm, secondaryCount, treeSelection],
+    [images, activeFilter, activeCategoryId, addingToCategory, searchTerm, secondaryCount, treeSelection],
   );
+
+  useEffect(() => {
+    setSelectedImageIds([]);
+    selectionDrag.current = null;
+    selectionRectRef.current = null;
+    setSelectionRect(null);
+  }, [activeCategoryId, activeFilter, searchTerm, secondaryCount, treeSelection, addingToCategory]);
+
+  const visibleIds = new Set(visibleImages.map((image) => image.id));
+  const activeSelection = selectedImageIds.filter((id) => visibleIds.has(id));
 
   const toggleImageSelection = (id: string) => {
     setSelectedImageIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
@@ -163,7 +173,7 @@ export default function Home() {
       setActiveFilter('all');
       setActiveCategoryId(category.id);
       setSelectedImageIds([]);
-      setSelectingImages(true);
+      setAddingToCategory(true);
       setSelectionMode(true);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : '创建分类失败');
@@ -171,27 +181,28 @@ export default function Home() {
   };
 
   const assignSelectedImages = async (action: 'add' | 'remove') => {
-    if (!activeCategoryId || !selectedImageIds.length || categoryBusy) return;
+    if (!activeCategoryId || !activeSelection.length || categoryBusy) return;
     setCategoryBusy(true);
     try {
       if (connected) {
         const response = await fetch(`/api/categories/${activeCategoryId}/images`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageIds: selectedImageIds, action }),
+          body: JSON.stringify({ imageIds: activeSelection, action }),
         });
         if (!response.ok) throw new Error('更新分类失败');
       }
-      const changedCount = selectedImageIds.filter((id) => action === 'add'
+      const changedCount = activeSelection.filter((id) => action === 'add'
         ? !images.find((image) => image.id === id)?.categoryIds?.includes(activeCategoryId)
         : images.find((image) => image.id === id)?.categoryIds?.includes(activeCategoryId)).length;
-      setImages((current) => current.map((image) => selectedImageIds.includes(image.id)
+      setImages((current) => current.map((image) => activeSelection.includes(image.id)
         ? { ...image, categoryIds: action === 'add' ? Array.from(new Set([...(image.categoryIds || []), activeCategoryId])) : (image.categoryIds || []).filter((id) => id !== activeCategoryId) }
         : image));
       setCategories((current) => current.map((category) => category.id === activeCategoryId
         ? { ...category, count: Math.max(0, category.count + (action === 'add' ? changedCount : -changedCount)) }
         : category));
       setSelectedImageIds([]);
-      setSelectingImages(false);
+      setAddingToCategory(false);
+      setSelectionMode(false);
       setNotice(action === 'add' ? '已加入分类' : '已从分类移除');
     } catch { setNotice('分类更新失败，请重试'); }
     finally { setCategoryBusy(false); }
@@ -199,12 +210,10 @@ export default function Home() {
 
   const selectAllVisible = () => {
     const allSelected = visibleImages.every((image) => selectedImageIds.includes(image.id));
-    setSelectedImageIds((current) => allSelected
-      ? current.filter((id) => !visibleImages.some((image) => image.id === id))
-      : Array.from(new Set([...current, ...visibleImages.map((image) => image.id)])));
+    setSelectedImageIds(allSelected ? [] : visibleImages.map((image) => image.id));
   };
 
-  const activeSelection = selectedImageIds;
+
 
   const updateSelectionFromRectangle = (selection: { left: number; top: number; width: number; height: number }) => {
     const selected = Array.from(galleryRef.current?.querySelectorAll<HTMLElement>('[data-image-id]') || [])
@@ -459,17 +468,18 @@ export default function Home() {
 
       <section className="toolbar" id="gallery">
         <div className="filter-tabs">
-          <button className={activeFilter === 'all' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(null); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>全部图片 <b>{images.length}</b></button>
-          <button className={activeFilter === 'featured' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('featured'); setActiveCategoryId(null); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>精选 <b>{images.filter((image) => image.featured).length}</b></button>
-          {categories.map((category) => <button key={category.id} className={activeCategoryId === category.id ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(category.id); setSelectingImages(false); setSelectionMode(false); setSelectedImageIds([]); }}>{category.name} <b>{category.count}</b></button>)}
+          <button className={activeFilter === 'all' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(null); setAddingToCategory(false); setSelectionMode(false); setSelectedImageIds([]); }}>全部图片 <b>{images.length}</b></button>
+          <button className={activeFilter === 'featured' && !activeCategoryId ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('featured'); setActiveCategoryId(null); setAddingToCategory(false); setSelectionMode(false); setSelectedImageIds([]); }}>精选 <b>{images.filter((image) => image.featured).length}</b></button>
+          {categories.map((category) => <button key={category.id} className={activeCategoryId === category.id ? 'tab active' : 'tab'} onClick={() => { setActiveFilter('all'); setActiveCategoryId(category.id); setAddingToCategory(false); setSelectionMode(false); setSelectedImageIds([]); }}>{category.name} <b>{category.count}</b></button>)}
           <button className="tab add-category-tab" onClick={() => setCategoryModalOpen(true)} aria-label="新建分类" title="新建分类">＋</button>
         </div>
         <label className="secondary-filter">副物体数量<select aria-label="副物体数量" value={secondaryCount} onChange={(event) => { setSecondaryCount(event.target.value); setSelectedImageIds([]); }}><option value="all">全部</option>{[0, 1, 2, 3].map((count) => <option key={count} value={count}>{count} 个</option>)}</select></label><label className="search-box"><span aria-hidden="true" className="search-icon">⌕</span><input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="搜索图片名称" aria-label="搜索图片名称" />{searchTerm && <button type="button" className="search-clear" onClick={() => setSearchTerm('')} aria-label="清除搜索">×</button>}</label>
-        <div className="toolbar-end">{!selectionMode ? <button className="button ghost download-entry" onClick={() => { setSelectionMode(true); setSelectingImages(Boolean(activeCategoryId)); setSelectedImageIds([]); }}>选择图片</button> : <button className="button ghost download-entry" onClick={() => { setSelectionMode(false); setSelectingImages(false); setSelectedImageIds([]); }}>取消选择</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
+        <div className="toolbar-end">{activeCategoryId && !selectionMode && <button className="button ghost download-entry" onClick={() => { setAddingToCategory(true); setSelectionMode(true); setSelectedImageIds([]); }}>添加图片到分类</button>}{!selectionMode ? <button className="button ghost download-entry" onClick={() => { setSelectionMode(true); setAddingToCategory(false); setSelectedImageIds([]); }}>选择图片</button> : <button className="button ghost download-entry" onClick={() => { setSelectionMode(false); setAddingToCategory(false); setSelectedImageIds([]); }}>取消选择</button>}<div className="sort-label"><Icon>↕</Icon> 最新上传</div></div>
       </section>
 
       {secondaryCount !== 'all' && <div className="filter-status" role="status">{`匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败，请刷新页面重试</>}</div>}
-      {selectionMode && <div className="category-tools selection-tools"><span>已选 {selectedImageIds.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!selectedImageIds.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!selectedImageIds.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <><button className="button primary" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>加入分类</button><button className="button ghost" disabled={!selectedImageIds.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button></>}<button className="button danger" disabled={!selectedImageIds.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
+      {addingToCategory && <div className="category-add-banner" role="status">正在添加到「{categories.find((category) => category.id === activeCategoryId)?.name}」：从全部图片中选择，可叠加搜索和物体筛选。<button className="text-button" disabled={categoryBusy} onClick={() => { setAddingToCategory(false); setSelectionMode(false); setSelectedImageIds([]); }}>取消并返回分类</button></div>}
+      {selectionMode && <div className="category-tools selection-tools"><span>已选 {activeSelection.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!activeSelection.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <>{addingToCategory && <button className="button primary" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>确认加入分类</button>}{!addingToCategory && <button className="button ghost" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button>}</>}<button className="button danger" disabled={!activeSelection.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
       {treeSelection.id && <div className="filter-status">物体分类：{treeSelection.label} · 匹配 {visibleImages.length} 张 <button className="text-button" onClick={() => setTreeSelection({ id: null, label: '', terms: null })}>清除</button></div>}
       <div className="gallery-with-tree"><SubjectTree images={images} selectedId={treeSelection.id} onSelect={(id, label, terms) => { setTreeSelection({ id, label, terms }); setSelectedImageIds([]); }} />
@@ -479,7 +489,7 @@ export default function Home() {
           <div className="card-overlay"><p className="image-name">{image.name}</p><button className={image.featured ? 'feature active' : 'feature'} onClick={() => toggleFeatured(image.id)} aria-label="切换精选">{image.featured ? '★' : '☆'}</button></div>
         </article>})}
         {selectionRect && <div className="selection-rectangle" style={{ left: selectionRect.left, top: selectionRect.top, width: selectionRect.width, height: selectionRect.height }} />}
-        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : (secondaryCount !== 'all' || treeSelection.id) ? (filterError ? '部分标签未能加载，请刷新页面重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“选择图片”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
+        {!visibleImages.length && <div className="gallery-empty">{authenticated && !connected ? notice || '云端图片暂时无法读取，请检查数据库连接。' : (secondaryCount !== 'all' || treeSelection.id) ? (filterError ? '部分标签未能加载，请刷新页面重试。' : '没有符合当前筛选条件的图片。') : activeCategoryId ? '这个分类还没有图片。点击“添加图片到分类”，从画廊中添加。' : '没有找到匹配的图片。'}</div>}
       </section>
 
       </div>

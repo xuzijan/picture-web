@@ -1,0 +1,23 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const ts = require('typescript');
+const vm = require('node:vm');
+const JSZip = require('jszip');
+const source = fs.readFileSync('app/page.tsx', 'utf8');
+const expression = source.slice(source.indexOf('    () => images'), source.indexOf('\n    [images, activeFilter')).trim().replace(/,$/, '');
+const js = ts.transpileModule('const filter = ' + expression, {compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText;
+const images = Array.from({length:271}, (_,i)=>({id:(i+1).toString(16).padStart(24,'0'),name:`sample_${i}.png`,createdAt:i,categoryIds:i<100?['1109']:[],featured:i%2===0,subjectTags:{mainSubject:i%2?'cat':'dog',secondarySubjects:i%2?['ball']:[]}}));
+function filter(overrides={}) { const context={images,activeFilter:'all',activeCategoryId:'1109',addingToCategory:false,searchTerm:'',secondaryCount:'all',treeSelection:{terms:null},...overrides}; return vm.runInNewContext(js+'; filter()',context); }
+assert.equal(filter().length,100);
+assert.equal(filter({addingToCategory:true}).length,271);
+assert.equal(filter({secondaryCount:'0'}).length,50);
+assert.equal(filter({treeSelection:{terms:['ball']}}).length,50);
+assert.equal(filter({activeFilter:'featured'}).length,50);
+assert.equal(filter({searchTerm:'sample_99.png'}).length,1);
+assert.equal(filter({addingToCategory:false}).length,100);
+assert(source.includes('setSelectionMode(true); setAddingToCategory(false);'));
+const records=filter().map(i=>({_id:i.id,name:i.name,url:`https://fixture/${i.id}`}));
+const exportsObject={};
+const route=ts.transpileModule(fs.readFileSync('app/api/download/route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,esModuleInterop:true,target:ts.ScriptTarget.ES2020}}).outputText;
+vm.runInNewContext(route,{exports:exportsObject,Buffer,URL,Uint8Array,Response,fetch:async(url)=>new Response(url),require:(name)=>name==='@/lib/auth'?{requireUser:async()=> 'test'}:name==='@/lib/db'?{getDb:async()=>({collection:()=>({find:(query)=>({toArray:async()=>records.filter(r=>query._id.$in.some(id=>String(id)===r._id))})})})}:name==='next/server'?{NextResponse:Response}:require(name)});
+(async()=>{const response=await exportsObject.GET(new Request('https://fixture/api/download?'+records.map(r=>'id='+r._id).join('&')));assert.equal(response.status,200);const zip=await JSZip.loadAsync(await response.arrayBuffer());assert.equal(Object.keys(zip.files).length,100);for(const r of records) assert.equal(await zip.file(r.name).async('string'),r.url);console.log('PASS: category 100, add mode 271, combined filters, return to category, download ZIP contains exactly the intended 100 files.');})().catch(e=>{console.error(e);process.exitCode=1});
