@@ -2,7 +2,7 @@
 
 import { ChangeEvent, DragEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Show, SignInButton, UserButton } from '@clerk/nextjs';
-import JSZip from 'jszip';
+import { downloadZip } from '@/lib/download-zip';
 import SubjectTree from './components/SubjectTree';
 
 type SubjectTags = { mainSubject: string; secondarySubjects: string[] };
@@ -65,6 +65,9 @@ export default function Home() {
   const [selectedImageIds, setSelectedImageIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
   const [downloadBusy, setDownloadBusy] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState('');
+  const downloadController = useRef<AbortController | null>(null);
+  useEffect(() => () => downloadController.current?.abort(), []);
   const [selectionRect, setSelectionRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const selectionRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
   const galleryRef = useRef<HTMLElement>(null);
@@ -272,21 +275,11 @@ export default function Home() {
     if (!ids.length || downloadBusy) return;
     setDownloadBusy(true);
     setNotice('正在准备下载…');
+    const controller = new AbortController();
+    downloadController.current = controller;
+    const timer = window.setTimeout(() => controller.abort(new Error('下载超时，请重试')), 300000);
     try {
-      let blob: Blob;
-      if (connected) {
-        const query = ids.map((id) => `id=${encodeURIComponent(id)}`).join('&');
-        const response = await fetch(`/api/download?${query}`);
-        if (!response.ok) throw new Error('下载失败，请重试');
-        blob = await response.blob();
-      } else {
-        const zip = new JSZip();
-        await Promise.all(images.filter((image) => ids.includes(image.id)).map(async (image, index) => {
-          const response = await fetch(image.src);
-          zip.file(image.name || `image-${index + 1}`, await response.blob());
-        }));
-        blob = await zip.generateAsync({ type: 'blob' });
-      }
+      const blob = await downloadZip(images.filter((image) => ids.includes(image.id)), connected, controller.signal, (message) => { setDownloadProgress(message); setNotice(message); });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -294,13 +287,13 @@ export default function Home() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
       setNotice(`已准备 ${ids.length} 张图片`);
       setSelectedImageIds([]);
       setSelectionMode(false);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : '下载失败，请重试');
-    } finally { setDownloadBusy(false); }
+    } finally { controller.abort(); window.clearTimeout(timer); downloadController.current = null; setDownloadBusy(false); setDownloadProgress(''); }
   };
 
   const applyVoteToSelected = async (vote: 'up' | 'down') => {
@@ -478,8 +471,9 @@ export default function Home() {
       </section>
 
       {secondaryCount !== 'all' && <div className="filter-status" role="status">{`匹配 ${visibleImages.length} 张`}{filterError && <> · 部分标签加载失败，请刷新页面重试</>}</div>}
+      {downloadBusy && <div className="filter-status" role="status">{downloadProgress || '开始下载…'} <button className="text-button" onClick={() => downloadController.current?.abort(new Error('已取消下载'))}>取消下载</button></div>}
       {addingToCategory && <div className="category-add-banner" role="status">正在添加到「{categories.find((category) => category.id === activeCategoryId)?.name}」：从全部图片中选择，可叠加搜索和物体筛选。<button className="text-button" disabled={categoryBusy} onClick={() => { setAddingToCategory(false); setSelectionMode(false); setSelectedImageIds([]); }}>取消并返回分类</button></div>}
-      {selectionMode && <div className="category-tools selection-tools"><span>已选 {activeSelection.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!activeSelection.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? '准备中…' : '下载 ZIP'}</button><button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <>{addingToCategory && <button className="button primary" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>确认加入分类</button>}{!addingToCategory && <button className="button ghost" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button>}</>}<button className="button danger" disabled={!activeSelection.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
+      {selectionMode && <div className="category-tools selection-tools"><span>已选 {activeSelection.length} 张</span><button className="text-button" onClick={selectAllVisible}>{visibleImages.length > 0 && visibleImages.every((image) => selectedImageIds.includes(image.id)) ? '取消全选当前' : `全选当前 ${visibleImages.length} 张`}</button><button className="button ghost" disabled={!activeSelection.length || downloadBusy} onClick={() => void downloadSelected()}>{downloadBusy ? downloadProgress || '开始下载…' : '下载 ZIP'}</button>{downloadBusy && <button className="text-button" onClick={() => downloadController.current?.abort(new Error('已取消下载'))}>取消下载</button>}<button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('up')}>✓ 认可</button><button className="button ghost" disabled={!activeSelection.length || busy} onClick={() => void applyVoteToSelected('down')}>× 不认可</button>{activeCategoryId && <>{addingToCategory && <button className="button primary" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('add')}>确认加入分类</button>}{!addingToCategory && <button className="button ghost" disabled={!activeSelection.length || categoryBusy} onClick={() => void assignSelectedImages('remove')}>移出分类</button>}</>}<button className="button danger" disabled={!activeSelection.length || busy} onClick={() => void deleteSelected()}>删除</button></div>}
 
       {treeSelection.id && <div className="filter-status">物体分类：{treeSelection.label} · 匹配 {visibleImages.length} 张 <button className="text-button" onClick={() => setTreeSelection({ id: null, label: '', terms: null })}>清除</button></div>}
       <div className="gallery-with-tree"><SubjectTree images={images} selectedId={treeSelection.id} onSelect={(id, label, terms) => { setTreeSelection({ id, label, terms }); setSelectedImageIds([]); }} />

@@ -5,6 +5,7 @@ import { requireUser } from '@/lib/auth';
 import { getDb } from '@/lib/db';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 function safeFilename(name: string, fallback: string) {
   const cleaned = name.replace(/[\\/:*?"<>|\r\n]+/g, '_').trim();
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
 
     if (records.length === 1) {
       const record = records[0];
-      const image = await fetch(record.url, { cache: 'no-store' });
+      const image = await fetch(record.url, { cache: 'no-store', signal: AbortSignal.timeout(20000) });
       if (!image.ok) return NextResponse.json({ error: 'Unable to download image' }, { status: 502 });
       const body = new Uint8Array(await image.arrayBuffer());
       return new NextResponse(body, {
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
 
     const zip = new JSZip();
     for (const record of records) {
-      const image = await fetch(record.url, { cache: 'no-store' });
+      const image = await fetch(record.url, { cache: 'no-store', signal: AbortSignal.timeout(20000) });
       if (!image.ok) return NextResponse.json({ error: `Unable to download ${record.name}` }, { status: 502 });
       zip.file(safeFilename(record.name, `image-${String(record._id)}`), Buffer.from(await image.arrayBuffer()));
     }
